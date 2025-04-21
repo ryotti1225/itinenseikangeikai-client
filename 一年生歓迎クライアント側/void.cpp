@@ -73,31 +73,35 @@ const char* TITLE = "Untitled_Dxlib_window";
 
 void start_dxlib(int WIN_WIDTH, int WIN_HEIGHT, const char* TITLE)
 {
-    ChangeWindowMode(true);
-    SetWindowSizeChangeEnableFlag(true, true);
-    SetMainWindowText((const TCHAR*)TITLE);
-    SetGraphMode(WIN_WIDTH, WIN_HEIGHT, 32);
-    SetWindowSizeExtendRate(1.0);
-    SetBackgroundColor(0, 128, 128);
-    SetDrawScreen(DX_SCREEN_BACK);
+	ChangeWindowMode(true);
+	SetWindowSizeChangeEnableFlag(true, true);
+	SetMainWindowText((const TCHAR*)TITLE);
+	SetGraphMode(WIN_WIDTH, WIN_HEIGHT, 32);
+	SetWindowSizeExtendRate(1.0);
+	SetBackgroundColor(0, 128, 128);
+	SetDrawScreen(DX_SCREEN_BACK);
 
-    if (DxLib_Init() == -1)
-    {
-        std::cout << "#WARNIN# DxLib init FAILED #WARNIN#";
-    }
+	if (DxLib_Init() == -1)
+	{
+		std::cout << "#WARNIN# DxLib init FAILED #WARNIN#";
+	}
 
 }
 
 // ‰Šú‰»ŠÖ”
 void InitGame() {
-    // ‰æ‘œ‚Ì“Ç‚Ýž‚Ý
-    bgHandle = LoadGraph("bg.png");
-    siroHandle = LoadGraph("siro.png");
-    kuroHandle = LoadGraph("kuro.png");
-    blankHandle = LoadGraph("blank.png");
+	// ‰æ‘œ‚Ì“Ç‚Ýž‚Ý
+	bgHandle = LoadGraph("bg.png");
+	siroHandle = LoadGraph("siro.png");
+	kuroHandle = LoadGraph("kuro.png");
+	blankHandle = LoadGraph("blank.png");
 }
 
-// ”Õ–Ê‚Ì•`‰æ
+// ƒ^[ƒ“î•ñ‚Ì•`‰æ
+void DrawTurnInfo() {
+	std::string turnText = "Turn: Player " + std::to_string(currentPlayer);
+	DrawString(600, 50, turnText.c_str(), GetColor(255, 255, 255));
+}
 // ”Õ–Ê‚Ì•`‰æ
 void DrawBoard() {
     // ”wŒi‰æ‘œ‚Ì•‚Æ‚‚³‚ðŽæ“¾
@@ -125,52 +129,46 @@ void DrawBoard() {
             int drawX2 = drawX + CELL_SIZE; // k¬Œã‚Ì‰E‰ºXÀ•W
             int drawY2 = drawY + CELL_SIZE; // k¬Œã‚Ì‰E‰ºYÀ•W
 
-            // ƒ}ƒX‚Ìó‘Ô‚É‰ž‚¶‚Ä‰æ‘œ‚ð•`‰æ
-            if (board[y][x] == 1) {
-                DrawExtendGraph(drawX, drawY, drawX2, drawY2, siroHandle, TRUE);
-            }
-            else if (board[y][x] == 2) {
-                DrawExtendGraph(drawX, drawY, drawX2, drawY2, kuroHandle, TRUE);
-            }
-            else {
-                DrawExtendGraph(drawX, drawY, drawX2, drawY2, blankHandle, TRUE);
-            }
-        }
-    }
-}
-
-// ƒ^[ƒ“î•ñ‚Ì•`‰æ
-void DrawTurnInfo() {
-    std::string turnText = "Turn: Player " + std::to_string(currentPlayer);
-    DrawString(600, 50, turnText.c_str(), GetColor(255, 255, 255));
+			// ƒ}ƒX‚Ìó‘Ô‚É‰ž‚¶‚Ä‰æ‘œ‚ð•`‰æ
+			if (board[y][x] == 1) {
+				DrawExtendGraph(drawX, drawY, drawX2, drawY2, siroHandle, TRUE);
+			}
+			else if (board[y][x] == 2) {
+				DrawExtendGraph(drawX, drawY, drawX2, drawY2, kuroHandle, TRUE);
+			}
+			else {
+				DrawExtendGraph(drawX, drawY, drawX2, drawY2, blankHandle, TRUE);
+			}
+		}
+	}
 }
 
 // ƒƒCƒ“ŠÖ”
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
-    // DxLib ‰Šú‰»
-    ChangeWindowMode(TRUE);
-    SetGraphMode(WIN_WIDTH, WIN_HEIGHT, 32);
-    if (DxLib_Init() == -1) {
-        return -1;
-    }
+	// DxLib ‰Šú‰»
+	ChangeWindowMode(TRUE);
+	SetGraphMode(WIN_WIDTH, WIN_HEIGHT, 32);
+	if (DxLib_Init() == -1) {
+		return -1;
+	}
 	start_dxlib(WIN_WIDTH, WIN_HEIGHT, TITLE);
 
-    // ƒQ[ƒ€‰Šú‰»
-    InitGame();
+	// ƒQ[ƒ€‰Šú‰»
+	InitGame();
 
-    while (ProcessMessage() == 0) {
-        ClearDrawScreen();
+	while (ProcessMessage() == 0) {
+		ClearDrawScreen();
 
-        // ”Õ–Ê‚Ì•`‰æ
-        DrawBoard();
+		// ”Õ–Ê‚Ì•`‰æ
+		DrawBoard();
 
-        // ƒ^[ƒ“î•ñ‚Ì•`‰æ
-        DrawTurnInfo();
+		// ƒ^[ƒ“î•ñ‚Ì•`‰æ
+		DrawTurnInfo();
 
-        // “ü—Íˆ—
-        if (CheckHitKey(KEY_INPUT_ESCAPE)) {
-            break;
-        }
+		// “ü—Íˆ—
+		if (CheckHitKey(KEY_INPUT_ESCAPE)) {
+			break;
+		}
 
         // ƒ}ƒEƒXƒNƒŠƒbƒN‚Å”Õ–Ê‚ðXV
         // ƒ}ƒEƒXƒNƒŠƒbƒN‚Å”Õ–Ê‚ðXV
@@ -205,9 +203,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
             }
         }
 
-        ScreenFlip();
-    }
+		ScreenFlip();
+	}
 
-    DxLib_End();
-    return 0;
+	DxLib_End();
+	return 0;
 }
