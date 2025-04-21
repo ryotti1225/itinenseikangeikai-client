@@ -9,49 +9,49 @@
 ///		false game続行
 bool Judge(int x, int y, std::vector<std::vector<int>>& board)
 {
-    int col = board[x][y];
-    if (col == 0) return false;
+	int col = board[x][y];
+	if (col == 0) return false;
 
-    // 8方向のチェック用の配列
-    const int dx[] = { 1, 0, 1, -1 };  // 縦、横、斜め（右下）、斜め（左下）
-    const int dy[] = { 0, 1, 1, 1 };
+	// 8方向のチェック用の配列
+	const int dx[] = { 1, 0, 1, -1 };  // 縦、横、斜め（右下）、斜め（左下）
+	const int dy[] = { 0, 1, 1, 1 };
 
-    for (int dir = 0; dir < 4; dir++) {
-        int count = 1;  // 現在の位置を1からカウント開始
+	for (int dir = 0; dir < 4; dir++) {
+		int count = 1;  // 現在の位置を1からカウント開始
 
-        // 正方向
-        for (int i = 1; i < 5; i++) {
-            int nx = x + dx[dir] * i;
-            int ny = y + dy[dir] * i;
+		// 正方向
+		for (int i = 1; i < 5; i++) {
+			int nx = x + dx[dir] * i;
+			int ny = y + dy[dir] * i;
 
-            if (nx < 0 || nx >= board.size() || ny < 0 || ny >= board[0].size() || board[nx][ny] != col) {
-                break;
-            }
-            count++;
-        }
+			if (nx < 0 || nx >= board.size() || ny < 0 || ny >= board[0].size() || board[nx][ny] != col) {
+				break;
+			}
+			count++;
+		}
 
-        // 逆方向
-        for (int i = 1; i < 5; i++) {
-            int nx = x - dx[dir] * i;
-            int ny = y - dy[dir] * i;
+		// 逆方向
+		for (int i = 1; i < 5; i++) {
+			int nx = x - dx[dir] * i;
+			int ny = y - dy[dir] * i;
 
-            if (nx < 0 || nx >= board.size() || ny < 0 || ny >= board[0].size() || board[nx][ny] != col) {
-                break;
-            }
-            count++;
-        }
+			if (nx < 0 || nx >= board.size() || ny < 0 || ny >= board[0].size() || board[nx][ny] != col) {
+				break;
+			}
+			count++;
+		}
 
-        if (count >= 5) {
-            return true;
-        }
-    }
-    return false;
+		if (count >= 5) {
+			return true;
+		}
+	}
+	return false;
 }
 
 
 // ウィンドウサイズ
-const int WIN_WIDTH = 800;
-const int WIN_HEIGHT = 600;
+const int WIN_WIDTH = 1280;
+const int WIN_HEIGHT = 960;
 
 // マス目のサイズ
 const int CELL_SIZE = 22;
@@ -104,30 +104,30 @@ void DrawTurnInfo() {
 }
 // 盤面の描画
 void DrawBoard() {
-    // 背景画像の幅と高さを取得
-    int bgWidth, bgHeight;
-    GetGraphSize(bgHandle, &bgWidth, &bgHeight);
+	// 背景画像の幅と高さを取得
+	int bgWidth, bgHeight;
+	GetGraphSize(bgHandle, &bgWidth, &bgHeight);
 
-    // 背景を画面中央に描画
-    int bgX = (WIN_WIDTH - bgWidth) / 2;
-    int bgY = (WIN_HEIGHT - bgHeight) / 2;
-    DrawGraph(bgX, bgY, bgHandle, TRUE);
+	// 背景を画面中央に描画
+	int bgX = (WIN_WIDTH - bgWidth) / 2;
+	int bgY = ((WIN_HEIGHT - bgHeight) / 2)-80;
+	DrawGraph(bgX, bgY, bgHandle, TRUE);
 
-    // 盤面の幅と高さを計算
-    int boardWidth = BOARD_SIZE * CELL_SIZE;
-    int boardHeight = BOARD_SIZE * CELL_SIZE;
+	// 盤面の幅と高さを計算
+	int boardWidth = BOARD_SIZE * CELL_SIZE;
+	int boardHeight = BOARD_SIZE * CELL_SIZE;
 
-    // 盤面の左上の描画開始位置を計算
-    int startX = (WIN_WIDTH - boardWidth) / 2;
-    int startY = (WIN_HEIGHT - boardHeight) / 2;
+	// 盤面の左上の描画開始位置を計算
+	int startX = (WIN_WIDTH - boardWidth) / 2;
+	int startY =  ((WIN_HEIGHT - boardHeight) / 2)-80;
 
-    // 盤面を描画
-    for (int y = 0; y < BOARD_SIZE; ++y) {
-        for (int x = 0; x < BOARD_SIZE; ++x) {
-            int drawX = startX + x * CELL_SIZE;
-            int drawY = startY + y * CELL_SIZE;
-            int drawX2 = drawX + CELL_SIZE; // 縮小後の右下X座標
-            int drawY2 = drawY + CELL_SIZE; // 縮小後の右下Y座標
+	// 盤面を描画
+	for (int y = 0; y < BOARD_SIZE; ++y) {
+		for (int x = 0; x < BOARD_SIZE; ++x) {
+			int drawX = startX + x * CELL_SIZE;
+			int drawY = startY + y * CELL_SIZE;
+			int drawX2 = drawX + CELL_SIZE; // 縮小後の右下X座標
+			int drawY2 = drawY + CELL_SIZE; // 縮小後の右下Y座標
 
 			// マスの状態に応じて画像を描画
 			if (board[y][x] == 1) {
@@ -170,38 +170,38 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			break;
 		}
 
-        // マウスクリックで盤面を更新
-        // マウスクリックで盤面を更新
-        if ((GetMouseInput() & MOUSE_INPUT_LEFT) != 0) {
-            int mouseX, mouseY;
-            GetMousePoint(&mouseX, &mouseY);
+		// マウスクリックで盤面を更新
+		// マウスクリックで盤面を更新
+		if ((GetMouseInput() & MOUSE_INPUT_LEFT) != 0) {
+			int mouseX, mouseY;
+			GetMousePoint(&mouseX, &mouseY);
 
-            // 盤面の左上の描画開始位置を計算
-            int boardWidth = BOARD_SIZE * CELL_SIZE;
-            int boardHeight = BOARD_SIZE * CELL_SIZE;
-            int startX = (WIN_WIDTH - boardWidth) / 2;
-            int startY = (WIN_HEIGHT - boardHeight) / 2;
+			// 盤面の左上の描画開始位置を計算
+			int boardWidth = BOARD_SIZE * CELL_SIZE;
+			int boardHeight = BOARD_SIZE * CELL_SIZE;
+			int startX = (WIN_WIDTH - boardWidth) / 2;
+			int startY = ((WIN_HEIGHT - boardHeight) / 2) - 80;
 
-            // マウス座標を盤面の座標に変換
-            int gridX = (mouseX - startX) / CELL_SIZE;
-            int gridY = (mouseY - startY) / CELL_SIZE;
+			// マウス座標を盤面の座標に変換
+			int gridX = (mouseX - startX) / CELL_SIZE;
+			int gridY = (mouseY - startY) / CELL_SIZE;
 
-            // 盤面の範囲内か確認
-            if (gridX >= 0 && gridX < BOARD_SIZE && gridY >= 0 && gridY < BOARD_SIZE) {
-                if (board[gridY][gridX] == 0) {
-                    board[gridY][gridX] = currentPlayer;
-                    currentPlayer = (currentPlayer == 1) ? 2 : 1;
-                }
-            }
+			// 盤面の範囲内か確認
+			if (gridX >= 0 && gridX < BOARD_SIZE && gridY >= 0 && gridY < BOARD_SIZE) {
+				if (board[gridY][gridX] == 0) {
+					board[gridY][gridX] = currentPlayer;
+					currentPlayer = (currentPlayer == 1) ? 2 : 1;
 
-            if (Judge(gridY, gridX, board))
-            {
-                std::string turnText = "winner: Player " + std::to_string(currentPlayer);
-                DrawString(300, 50, turnText.c_str(), GetColor(255, 255, 255));
+			if (Judge(gridY, gridX, board))
+			{
+				std::string turnText = "winner: Player " + std::to_string(currentPlayer);
+				DrawString(300, 50, turnText.c_str(), GetColor(255, 255, 255));
 
 
-            }
-        }
+			}
+				}
+			}
+		}
 
 		ScreenFlip();
 	}
