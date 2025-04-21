@@ -362,3 +362,5 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 /一年生歓迎クライアント側/Log.txt
+FodyWeavers.xsd
+/一年生歓迎クライアント側/.vscode
