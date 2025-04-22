@@ -54,7 +54,7 @@ const int WIN_WIDTH = 1280;
 const int WIN_HEIGHT = 960;
 
 // マス目のサイズ
-const int CELL_SIZE = 22;
+const int CELL_SIZE = 33;
 
 // 盤面のサイズ
 const int BOARD_SIZE = 19;
