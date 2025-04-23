@@ -82,7 +82,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Users\stsuc\source\repos\itinenseikangeikai-client\一年生歓迎クライアント側\Dxlib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Users\stsuc\source\repos\itinenseikangeikai-client\一年生歓迎クライアント側\Dxlib;C:\Users\irc2021\source\repos\itinenseikangeikai-client\一年生歓迎クライアント側\Dxlib</AdditionalLibraryDirectories>
       <SpecifySectionAttributes>
       </SpecifySectionAttributes>
     </Link>
@@ -103,7 +103,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Users\stsuc\source\repos\itinenseikangeikai-client\一年生歓迎クライアント側\Dxlib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Users\stsuc\source\repos\itinenseikangeikai-client\一年生歓迎クライアント側\Dxlib;C:\Users\irc2021\source\repos\itinenseikangeikai-client\一年生歓迎クライアント側\Dxlib</AdditionalLibraryDirectories>
       <SpecifySectionAttributes>
       </SpecifySectionAttributes>
     </Link>
@@ -120,7 +120,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Users\stsuc\source\repos\itinenseikangeikai-client\一年生歓迎クライアント側\Dxlib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Users\stsuc\source\repos\itinenseikangeikai-client\一年生歓迎クライアント側\Dxlib;C:\Users\irc2021\source\repos\itinenseikangeikai-client\一年生歓迎クライアント側\Dxlib</AdditionalLibraryDirectories>
       <SpecifySectionAttributes>
       </SpecifySectionAttributes>
     </Link>
@@ -141,7 +141,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Users\stsuc\source\repos\itinenseikangeikai-client\一年生歓迎クライアント側\Dxlib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Users\stsuc\source\repos\itinenseikangeikai-client\一年生歓迎クライアント側\Dxlib;C:\Users\irc2021\source\repos\itinenseikangeikai-client\一年生歓迎クライアント側\Dxlib</AdditionalLibraryDirectories>
       <SpecifySectionAttributes>
       </SpecifySectionAttributes>
     </Link>

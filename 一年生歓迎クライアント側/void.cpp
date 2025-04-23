@@ -29,7 +29,6 @@ bool Judge(int x, int y, std::vector<std::vector<int>>& board)
 			}
 			count++;
 		}
-
 		// 逆方向
 		for (int i = 1; i < 5; i++) {
 			int nx = x - dx[dir] * i;
@@ -48,6 +47,43 @@ bool Judge(int x, int y, std::vector<std::vector<int>>& board)
 	return false;
 }
 
+
+std::array<std::string,5> rsv_question(){
+	return{ "Aを選んでください" ,"a","b","c","d" };
+}
+
+/// <summary>
+/// 問題の解答を送信する
+/// ｒｙｏｔｔｉ１２１５よろしく
+/// </summary>
+/// <param name="answer">答え</param>
+/// <returns></returns>
+int send_answer(char answer) {
+	return 0;
+}
+
+/// <summary>
+/// 盤面を書き換える
+/// ｒｙｏｔｔｉ１２１５よろしく 
+/// </summary>
+/// <param name="board"></param>
+/// <returns></returns>
+int update_board(std::vector<std::vector<int>>& board) {
+	static std::vector<std::vector<int>> new_board = board;///新しい盤面
+	std::vector<std::vector<int>> rsv_board;
+
+
+
+	///一時的に今の盤面をそのまま持っとく
+	new_board = board;
+	///盤面の受け取りの代わり
+
+	if (!rsv_board.empty()){
+		new_board = rsv_board;
+	}
+	board = new_board;
+	return 0;
+}
 
 // ウィンドウサイズ
 const int WIN_WIDTH = 1280;
@@ -143,6 +179,65 @@ void DrawBoard() {
 	}
 }
 
+
+const std::vector<unsigned int> cellColors = {
+	GetColor(255, 230, 230),
+	GetColor(230, 255, 230),
+	GetColor(230, 230, 255),
+	GetColor(255, 255, 230)
+};
+
+/// マウスオーバー時のハイライト色
+const unsigned int hoverColor = GetColor(255, 255, 255);
+
+void DrawRefinedStringTable(int left, int top, int right, int bottom, const std::vector<std::vector<std::string>>& table, int fontHandle = -1) {
+	size_t rows = table.size();
+	size_t cols = 0;
+	for (const auto& row : table) {
+		if (row.size() > cols) cols = row.size();
+	}
+
+	int tableWidth = right - left;
+	int tableHeight = bottom - top;
+
+	int columnWidth = tableWidth / (int)cols;
+	int lineHeight = tableHeight / (int)rows;
+
+	int mouseX, mouseY;
+	GetMousePoint(&mouseX, &mouseY);
+
+	for (size_t row = 0; row < rows; ++row) {
+		for (size_t col = 0; col < table[row].size(); ++col) {
+			int cellX = left + col * columnWidth;
+			int cellY = top + row * lineHeight;
+
+			bool isHover = mouseX >= cellX && mouseX < cellX + columnWidth &&
+				mouseY >= cellY && mouseY < cellY + lineHeight;
+
+			int bgColor = isHover ? GetColor(255, 255, 255) : cellColors[(row + col) % cellColors.size()];
+			int borderColor = GetColor(60, 60, 60);  // 濃い目のグレー
+
+			/// セル背景
+			DrawBox(cellX, cellY, cellX + columnWidth, cellY + lineHeight, bgColor, TRUE);
+			/// セル縁取り
+			DrawBox(cellX, cellY, cellX + columnWidth, cellY + lineHeight, borderColor, FALSE);
+
+			/// 中央揃え＋影
+			const std::string& text = table[row][col];
+			int textWidth = GetDrawStringWidthToHandle(text.c_str(), text.size(), fontHandle);
+			int textHeight = GetFontSize();
+
+			int centerX = cellX + (columnWidth - textWidth) / 2;
+			int centerY = cellY + (lineHeight - textHeight) / 2;
+
+			DrawStringToHandle(centerX + 2, centerY + 2, text.c_str(), GetColor(100, 100, 100), fontHandle);
+			DrawStringToHandle(centerX, centerY, text.c_str(), GetColor(0, 0, 0), fontHandle);
+		}
+	}
+}
+
+
+
 // メイン関数
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// DxLib 初期化
@@ -156,6 +251,23 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// ゲーム初期化
 	InitGame();
 
+
+
+
+
+	int fontHandle = CreateFontToHandle("MS 明朝", 28, 6, DX_FONTTYPE_ANTIALIASING);
+
+	std::vector<std::vector<std::string>> table = {
+		{"std::stringの内容"},
+		{"赤", "緑"},
+		{"青", "黄"}
+	};
+
+	int left = 100, top = 100, right = 500, bottom = 300;
+
+	
+	
+	
 	while (ProcessMessage() == 0) {
 		ClearDrawScreen();
 
@@ -202,6 +314,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				}
 			}
 		}
+
+		if (CheckHitKey(KEY_INPUT_LEFT) == 1) left -= 1;
+		if (CheckHitKey(KEY_INPUT_RIGHT) == 1) left += 1;
+		if (CheckHitKey(KEY_INPUT_UP) == 1) top -= 1;
+		if (CheckHitKey(KEY_INPUT_DOWN) == 1) top += 1;
+
+		DrawRefinedStringTable(left, top, right, bottom, table, fontHandle);
+
+
+
 
 		ScreenFlip();
 	}
