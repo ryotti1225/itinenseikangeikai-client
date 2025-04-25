@@ -78,6 +78,8 @@ int update_board(std::vector<std::vector<int>>& board) {
 	new_board = board;
 	///盤面の受け取りの代わり
 
+
+
 	if (!rsv_board.empty()){
 		new_board = rsv_board;
 	}
@@ -96,7 +98,7 @@ const int CELL_SIZE = 33;
 const int BOARD_SIZE = 19;
 
 // 画像ハンドル
-int bgHandle, siroHandle, kuroHandle, blankHandle;
+int bgHandle, siroHandle, kuroHandle, blankHandle, kuro2Handle;///マウスオーバー時の画像
 
 // 盤面データ (1=白, 2=黒, 0=空白)
 std::vector<std::vector<int>> board(BOARD_SIZE, std::vector<int>(BOARD_SIZE, 0));
@@ -131,6 +133,7 @@ void InitGame() {
 	siroHandle = LoadGraph("siro.png");
 	kuroHandle = LoadGraph("kuro.png");
 	blankHandle = LoadGraph("blank.png");
+	kuro2Handle = LoadGraph("kuro2.png");
 }
 
 // ターン情報の描画
@@ -139,14 +142,14 @@ void DrawTurnInfo() {
 	DrawString(600, 50, turnText.c_str(), GetColor(255, 255, 255));
 }
 // 盤面の描画
-void DrawBoard() {
+void DrawBoard(int ms_x,int ms_y) {
 	// 背景画像の幅と高さを取得
 	int bgWidth, bgHeight;
 	GetGraphSize(bgHandle, &bgWidth, &bgHeight);
 
 	// 背景を画面中央に描画
 	int bgX = (WIN_WIDTH - bgWidth) / 2;
-	int bgY = ((WIN_HEIGHT - bgHeight) / 2)-80;
+	int bgY = ((WIN_HEIGHT - bgHeight) / 2)-100;
 	DrawGraph(bgX, bgY, bgHandle, TRUE);
 
 	// 盤面の幅と高さを計算
@@ -155,7 +158,7 @@ void DrawBoard() {
 
 	// 盤面の左上の描画開始位置を計算
 	int startX = (WIN_WIDTH - boardWidth) / 2;
-	int startY =  ((WIN_HEIGHT - boardHeight) / 2)-80;
+	int startY =  ((WIN_HEIGHT - boardHeight) / 2)-100;
 
 	// 盤面を描画
 	for (int y = 0; y < BOARD_SIZE; ++y) {
@@ -168,12 +171,16 @@ void DrawBoard() {
 			// マスの状態に応じて画像を描画
 			if (board[y][x] == 1) {
 				DrawExtendGraph(drawX, drawY, drawX2, drawY2, siroHandle, TRUE);
-			}
-			else if (board[y][x] == 2) {
+			}else if (board[y][x] == 2) {
 				DrawExtendGraph(drawX, drawY, drawX2, drawY2, kuroHandle, TRUE);
-			}
-			else {
-				DrawExtendGraph(drawX, drawY, drawX2, drawY2, blankHandle, TRUE);
+			}else {
+
+				if ( ms_x==x&&ms_y==y)
+				{
+					DrawExtendGraph(drawX, drawY, drawX2, drawY2, kuro2Handle, TRUE);
+				}
+
+				//DrawExtendGraph(drawX, drawY, drawX2, drawY2, blankHandle, TRUE);
 			}
 		}
 	}
@@ -193,20 +200,22 @@ const unsigned int hoverColor = GetColor(255, 255, 255);
 void DrawRefinedStringTable(int left, int top, int right, int bottom, const std::vector<std::vector<std::string>>& table, int fontHandle = -1) {
 	size_t rows = table.size();
 	size_t cols = 0;
-	for (const auto& row : table) {
+	/*for (const auto& row : table) {
 		if (row.size() > cols) cols = row.size();
-	}
+	}*/
 
 	int tableWidth = right - left;
 	int tableHeight = bottom - top;
-
-	int columnWidth = tableWidth / (int)cols;
-	int lineHeight = tableHeight / (int)rows;
-
 	int mouseX, mouseY;
 	GetMousePoint(&mouseX, &mouseY);
 
 	for (size_t row = 0; row < rows; ++row) {
+		cols = table[row].size(); // 各行の列数を取得
+
+	int columnWidth = tableWidth / (int)cols;
+	int lineHeight = tableHeight / (int)rows;
+
+
 		for (size_t col = 0; col < table[row].size(); ++col) {
 			int cellX = left + col * columnWidth;
 			int cellY = top + row * lineHeight;
@@ -215,23 +224,31 @@ void DrawRefinedStringTable(int left, int top, int right, int bottom, const std:
 				mouseY >= cellY && mouseY < cellY + lineHeight;
 
 			int bgColor = isHover ? GetColor(255, 255, 255) : cellColors[(row + col) % cellColors.size()];
-			int borderColor = GetColor(60, 60, 60);  // 濃い目のグレー
+			int borderColor = GetColor(150, 150, 150);  // 濃い目のグレー
 
+			/// セル縁取り
+			DrawBox(cellX-3, cellY-3, cellX + columnWidth+3, cellY + lineHeight+3, borderColor, true);
 			/// セル背景
 			DrawBox(cellX, cellY, cellX + columnWidth, cellY + lineHeight, bgColor, TRUE);
-			/// セル縁取り
-			DrawBox(cellX, cellY, cellX + columnWidth, cellY + lineHeight, borderColor, FALSE);
-
+			
 			/// 中央揃え＋影
 			const std::string& text = table[row][col];
-			int textWidth = GetDrawStringWidthToHandle(text.c_str(), text.size(), fontHandle);
-			int textHeight = GetFontSize();
+			int textWidth = GetDrawStringWidthToHandle(text.c_str(), text.size(), fontHandle)+10;
+			int textHeight = GetFontSize()+10;
+
+			if (text.find("\n")!=-1)
+			{
+				textHeight *= 3;
+				textHeight -= 10;
+			}
 
 			int centerX = cellX + (columnWidth - textWidth) / 2;
 			int centerY = cellY + (lineHeight - textHeight) / 2;
 
 			DrawStringToHandle(centerX + 2, centerY + 2, text.c_str(), GetColor(100, 100, 100), fontHandle);
 			DrawStringToHandle(centerX, centerY, text.c_str(), GetColor(0, 0, 0), fontHandle);
+			std::string tmp = "left:" + std::to_string(left) + " top:" + std::to_string(top) + " right:" + std::to_string(right) + " bottom:" + std::to_string(bottom);
+			DrawStringToHandle(0, 0, tmp.c_str(), GetColor(0, 0, 0), fontHandle);
 		}
 	}
 }
@@ -255,15 +272,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 
 
-	int fontHandle = CreateFontToHandle("MS 明朝", 28, 6, DX_FONTTYPE_ANTIALIASING);
-
-	std::vector<std::vector<std::string>> table = {
-		{"std::stringの内容"},
-		{"赤", "緑"},
-		{"青", "黄"}
-	};
-
-	int left = 100, top = 100, right = 500, bottom = 300;
+	int fontHandle = CreateFontToHandle("UD デジタル 教科書体 N", 28, 6, DX_FONTTYPE_ANTIALIASING_8X8);
+	int left = 112, top = 714, right = 1168, bottom = 957;
 
 	
 	
@@ -271,8 +281,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	while (ProcessMessage() == 0) {
 		ClearDrawScreen();
 
-		// 盤面の描画
-		DrawBoard();
 
 		// ターン情報の描画
 		DrawTurnInfo();
@@ -284,7 +292,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		// マウスクリックで盤面を更新
 		// マウスクリックで盤面を更新
-		if ((GetMouseInput() & MOUSE_INPUT_LEFT) != 0) {
 			int mouseX, mouseY;
 			GetMousePoint(&mouseX, &mouseY);
 
@@ -292,33 +299,56 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			int boardWidth = BOARD_SIZE * CELL_SIZE;
 			int boardHeight = BOARD_SIZE * CELL_SIZE;
 			int startX = (WIN_WIDTH - boardWidth) / 2;
-			int startY = ((WIN_HEIGHT - boardHeight) / 2) - 80;
-
+			int startY = ((WIN_HEIGHT - boardHeight) / 2) - 100;
 			// マウス座標を盤面の座標に変換
 			int gridX = (mouseX - startX) / CELL_SIZE;
 			int gridY = (mouseY - startY) / CELL_SIZE;
 
 			// 盤面の範囲内か確認
 			if (gridX >= 0 && gridX < BOARD_SIZE && gridY >= 0 && gridY < BOARD_SIZE) {
-				if (board[gridY][gridX] == 0) {
-					board[gridY][gridX] = currentPlayer;
-					currentPlayer = (currentPlayer == 1) ? 2 : 1;
-
-			if (Judge(gridY, gridX, board))
-			{
-				std::string turnText = "winner: Player " + std::to_string(currentPlayer);
-				DrawString(300, 50, turnText.c_str(), GetColor(255, 255, 255));
 
 
-			}
+
+
+
+			if ((GetMouseInput() & MOUSE_INPUT_LEFT) != 0) {
+			///おいてなかったら置く＆判定
+			if (board[gridY][gridX] == 0) {
+				board[gridY][gridX] = currentPlayer;
+				currentPlayer = (currentPlayer == 1) ? 2 : 1;
+
+				if (Judge(gridY, gridX, board))
+				{
+					std::string turnText = "winner: Player " + std::to_string(currentPlayer);
+					DrawString(300, 50, turnText.c_str(), GetColor(255, 255, 255));
+
 				}
 			}
 		}
+			}
+			else {
+				gridX = -1;
+				gridY = -1;
+			}
+		// 盤面の描画
+		DrawBoard(gridX,gridY);
 
 		if (CheckHitKey(KEY_INPUT_LEFT) == 1) left -= 1;
 		if (CheckHitKey(KEY_INPUT_RIGHT) == 1) left += 1;
 		if (CheckHitKey(KEY_INPUT_UP) == 1) top -= 1;
 		if (CheckHitKey(KEY_INPUT_DOWN) == 1) top += 1;
+		if (CheckHitKey(KEY_INPUT_A) == 1) right -= 1;
+		if (CheckHitKey(KEY_INPUT_D) == 1) right += 1;
+		if (CheckHitKey(KEY_INPUT_W) == 1) bottom -= 1;
+		if (CheckHitKey(KEY_INPUT_S) == 1) bottom += 1;
+
+		auto question = rsv_question();
+	std::vector<std::vector<std::string>> table = {
+		{question.at(0)},
+		{question.at(1), question.at(2)},
+		{question.at(3), question.at(4)}
+	};
+
 
 		DrawRefinedStringTable(left, top, right, bottom, table, fontHandle);
 
