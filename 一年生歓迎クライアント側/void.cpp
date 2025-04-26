@@ -5,6 +5,8 @@
 #include <algorithm>
 #include<array>
 
+bool put = true;
+
 ///ret true å‹ñ⁄ï¿Ç◊ê¨óß
 ///		false gameë±çs
 bool Judge(int x, int y, std::vector<std::vector<int>>& board)
@@ -313,7 +315,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 
 
-			if ((GetMouseInput() & MOUSE_INPUT_LEFT) != 0) {
+			if ((GetMouseInput() & MOUSE_INPUT_LEFT) != 0&&) {
 			///Ç®Ç¢ÇƒÇ»Ç©Ç¡ÇΩÇÁíuÇ≠ÅïîªíË
 			if (board[gridY][gridX] == 0) {
 				board[gridY][gridX] = currentPlayer;
@@ -325,6 +327,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 					DrawString(300, 50, turnText.c_str(), GetColor(255, 255, 255));
 
 				}
+				put = false;
 			}
 		}
 			}
@@ -335,14 +338,21 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		// î’ñ ÇÃï`âÊ
 		DrawBoard(gridX,gridY);
 
-		if (CheckHitKey(KEY_INPUT_LEFT) == 1) left -= 1;
-		if (CheckHitKey(KEY_INPUT_RIGHT) == 1) left += 1;
-		if (CheckHitKey(KEY_INPUT_UP) == 1) top -= 1;
-		if (CheckHitKey(KEY_INPUT_DOWN) == 1) top += 1;
-		if (CheckHitKey(KEY_INPUT_A) == 1) right -= 1;
-		if (CheckHitKey(KEY_INPUT_D) == 1) right += 1;
-		if (CheckHitKey(KEY_INPUT_W) == 1) bottom -= 1;
-		if (CheckHitKey(KEY_INPUT_S) == 1) bottom += 1;
+		//if (CheckHitKey(KEY_INPUT_LEFT) == 1) left -= 1;
+		//if (CheckHitKey(KEY_INPUT_RIGHT) == 1) left += 1;
+		//if (CheckHitKey(KEY_INPUT_UP) == 1) top -= 1;
+		//if (CheckHitKey(KEY_INPUT_DOWN) == 1) top += 1;
+		//if (CheckHitKey(KEY_INPUT_A) == 1) right -= 1;
+		//if (CheckHitKey(KEY_INPUT_D) == 1) right += 1;
+		//if (CheckHitKey(KEY_INPUT_W) == 1) bottom -= 1;
+		//if (CheckHitKey(KEY_INPUT_S) == 1) bottom += 1;
+
+		if (!put)
+		{
+			SetDrawBlendMode(DX_BLENDMODE_ALPHA, 128);
+			DrawBox(0, 0, WIN_WIDTH, WIN_HEIGHT, GetColor(0, 0, 0), true);
+			SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255);
+		}
 
 		auto question = rsv_question();
 	std::vector<std::vector<std::string>> table = {
