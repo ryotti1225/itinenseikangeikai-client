@@ -198,8 +198,6 @@ const std::vector<unsigned int> cellColors = {
 	GetColor(255, 255, 230)
 };
 
-/// マウスオーバー時のハイライト色
-const unsigned int hoverColor = GetColor(255, 255, 255);
 
 void DrawRefinedStringTable(int left, int top, int right, int bottom, const std::vector<std::vector<std::string>>& table, int fontHandle = -1) {
 	size_t rows = table.size();
@@ -224,10 +222,9 @@ void DrawRefinedStringTable(int left, int top, int right, int bottom, const std:
 			int cellX = left + col * columnWidth;
 			int cellY = top + row * lineHeight;
 
-			bool isHover = mouseX >= cellX && mouseX < cellX + columnWidth &&
-				mouseY >= cellY && mouseY < cellY + lineHeight;
 
-			int bgColor = isHover ? GetColor(255, 255, 255) : cellColors[(row + col) % cellColors.size()];
+
+			int bgColor = cellColors[(row + col) % cellColors.size()];
 			int borderColor = GetColor(150, 150, 150);  // 濃い目のグレー
 
 			/// セル縁取り
@@ -315,7 +312,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 
 
-			if ((GetMouseInput() & MOUSE_INPUT_LEFT) != 0&&) {
+			if ((GetMouseInput() & MOUSE_INPUT_LEFT) != 0&&put) {
 			///おいてなかったら置く＆判定
 			if (board[gridY][gridX] == 0) {
 				board[gridY][gridX] = currentPlayer;
@@ -335,6 +332,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				gridX = -1;
 				gridY = -1;
 			}
+
+			if (!put)
+			{
+				gridX = -1;
+				gridY = -1;
+			}
+
 		// 盤面の描画
 		DrawBoard(gridX,gridY);
 
@@ -347,12 +351,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//if (CheckHitKey(KEY_INPUT_W) == 1) bottom -= 1;
 		//if (CheckHitKey(KEY_INPUT_S) == 1) bottom += 1;
 
-		if (!put)
-		{
-			SetDrawBlendMode(DX_BLENDMODE_ALPHA, 128);
-			DrawBox(0, 0, WIN_WIDTH, WIN_HEIGHT, GetColor(0, 0, 0), true);
-			SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255);
-		}
+		int x1 = 0, y1 = 0, x2 = WIN_HEIGHT, y2 = WIN_WIDTH;
 
 		auto question = rsv_question();
 	std::vector<std::vector<std::string>> table = {
@@ -360,9 +359,21 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		{question.at(1), question.at(2)},
 		{question.at(3), question.at(4)}
 	};
-
-
+		if (put)
+		{
+			x1 = top;
+			y1 = left;
+			x2 = right;
+			y2 = bottom;
 		DrawRefinedStringTable(left, top, right, bottom, table, fontHandle);
+		}
+			SetDrawBlendMode(DX_BLENDMODE_ALPHA, 128);
+			DrawBox(y1, x1, y2, x2, GetColor(0, 0, 0), true);
+			SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255);
+
+
+
+	DrawRefinedStringTable(left, top, right, bottom, table, fontHandle);
 
 
 
