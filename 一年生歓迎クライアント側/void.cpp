@@ -177,7 +177,9 @@ void DrawBoard(int ms_x,int ms_y) {
 
 				if ( ms_x==x&&ms_y==y)
 				{
+					SetDrawBlendMode(DX_BLENDMODE_ALPHA, 128);
 					DrawExtendGraph(drawX, drawY, drawX2, drawY2, kuro2Handle, TRUE);
+					SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255);
 				}
 
 				//DrawExtendGraph(drawX, drawY, drawX2, drawY2, blankHandle, TRUE);
