@@ -339,6 +339,21 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				gridY = -1;
 			}
 
+            if (!put) {
+                char keys[256];
+                GetHitKeyStateAll(keys); // 全キーの状態を取得
+
+                for (int i = 0; i < 256; ++i) {
+                    if (keys[i]) { // キーが押されている場合
+                        put = true;
+                        send_answer(static_cast<char>(i)); // 押されたキーコードを送信
+						put == true;
+                        break; // 最初に押されたキーだけを処理
+                    }
+                }
+            }
+			
+
 		// 盤面の描画
 		DrawBoard(gridX,gridY);
 
@@ -361,19 +376,25 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	};
 		if (put)
 		{
+		DrawRefinedStringTable(left, top, right, bottom, table, fontHandle);
 			x1 = top;
 			y1 = left;
-			x2 = right;
-			y2 = bottom;
-		DrawRefinedStringTable(left, top, right, bottom, table, fontHandle);
+			x2 = bottom;
+			y2 = right;
+			SetDrawBlendMode(DX_BLENDMODE_ALPHA, 128);
+			DrawBox(y1, x1, y2, x2, GetColor(0, 0, 0), true);
+			SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255);
 		}
+		else {
+
 			SetDrawBlendMode(DX_BLENDMODE_ALPHA, 128);
 			DrawBox(y1, x1, y2, x2, GetColor(0, 0, 0), true);
 			SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255);
 
-
-
 	DrawRefinedStringTable(left, top, right, bottom, table, fontHandle);
+
+		}
+
 
 
 
