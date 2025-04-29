@@ -5,7 +5,7 @@
 #include <algorithm>
 #include<array>
 
-bool put = true;
+bool put = false;
 
 ///ret true 五目並べ成立
 ///		false game続行
@@ -51,7 +51,7 @@ bool Judge(int x, int y, std::vector<std::vector<int>>& board)
 
 
 std::array<std::string,5> rsv_question(){
-	return{ "Aを選んでください" ,"a","b","c","d" };
+	return{ "Aを選んでください" ,"a 1913","b","c","d" };
 }
 
 /// <summary>
@@ -254,7 +254,7 @@ void DrawRefinedStringTable(int left, int top, int right, int bottom, const std:
 	}
 }
 
-
+char key = 0;
 
 // メイン関数
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
@@ -346,7 +346,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                 for (int i = 0; i < 256; ++i) {
                     if (keys[i]) { // キーが押されている場合
                         put = true;
-                        send_answer(static_cast<char>(i)); // 押されたキーコードを送信
+
+						key = static_cast<char>(i);
+
+                        send_answer(key); // 押されたキーコードを送信
 						put == true;
                         break; // 最初に押されたキーだけを処理
                     }
@@ -394,9 +397,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	DrawRefinedStringTable(left, top, right, bottom, table, fontHandle);
 
 		}
+		std::string tmp = "key input:" + std::to_string(key);
 
-
-
+		DrawStringToHandle(30, 20, tmp.c_str(), GetColor(200, 200, 200), fontHandle);
 
 
 		ScreenFlip();
