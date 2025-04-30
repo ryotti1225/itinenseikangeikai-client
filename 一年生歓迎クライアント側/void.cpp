@@ -1,11 +1,39 @@
-#include "Dxlib/DxLib.h"
-#include <vector>
-#include <string>
-#include <iostream>
-#include <algorithm>
-#include<array>
+#include"incl.h"
+
 
 bool put = false;
+// ウィンドウサイズ
+const int WIN_WIDTH = 1280;
+const int WIN_HEIGHT = 960;
+// マス目のサイズ
+const int CELL_SIZE = 33;
+// 盤面のサイズ
+const int BOARD_SIZE = 19;
+// 画像ハンドル
+int bgHandle, siroHandle, kuroHandle, blankHandle, kuro2Handle;///マウスオーバー時の画像
+// 盤面データ (1=白, 2=黒, 0=空白)
+std::vector<std::vector<int>> board(BOARD_SIZE, std::vector<int>(BOARD_SIZE, 0));
+// プレイヤーターン (1=Player1, 2=Player2)
+int currentPlayer = 1;
+const char* TITLE = "Untitled_Dxlib_window";
+char key = 0;
+const std::vector<unsigned int> cellColors = {
+	GetColor(255, 230, 230),
+	GetColor(230, 255, 230),
+	GetColor(230, 230, 255),
+	GetColor(255, 255, 230)
+};
+
+
+
+
+
+
+
+
+
+void start_dxlib(int WIN_WIDTH, int WIN_HEIGHT, const char* TITLE);
+
 
 ///ret true 五目並べ成立
 ///		false game続行
@@ -49,94 +77,6 @@ bool Judge(int x, int y, std::vector<std::vector<int>>& board)
 	return false;
 }
 
-
-std::array<std::string,5> rsv_question(){
-	return{ "Aを選んでください" ,"a 1913","b","c","d" };
-}
-
-/// <summary>
-/// 問題の解答を送信する
-/// ｒｙｏｔｔｉ１２１５よろしく
-/// </summary>
-/// <param name="answer">答え</param>
-/// <returns></returns>
-int send_answer(char answer) {
-	return 0;
-}
-
-/// <summary>
-/// 盤面を書き換える
-/// ｒｙｏｔｔｉ１２１５よろしく 
-/// </summary>
-/// <param name="board"></param>
-/// <returns></returns>
-int update_board(std::vector<std::vector<int>>& board) {
-	static std::vector<std::vector<int>> new_board = board;///新しい盤面
-	std::vector<std::vector<int>> rsv_board;
-
-
-
-	///一時的に今の盤面をそのまま持っとく
-	new_board = board;
-	///盤面の受け取りの代わり
-
-
-
-	if (!rsv_board.empty()){
-		new_board = rsv_board;
-	}
-	board = new_board;
-	return 0;
-}
-
-// ウィンドウサイズ
-const int WIN_WIDTH = 1280;
-const int WIN_HEIGHT = 960;
-
-// マス目のサイズ
-const int CELL_SIZE = 33;
-
-// 盤面のサイズ
-const int BOARD_SIZE = 19;
-
-// 画像ハンドル
-int bgHandle, siroHandle, kuroHandle, blankHandle, kuro2Handle;///マウスオーバー時の画像
-
-// 盤面データ (1=白, 2=黒, 0=空白)
-std::vector<std::vector<int>> board(BOARD_SIZE, std::vector<int>(BOARD_SIZE, 0));
-
-// プレイヤーターン (1=Player1, 2=Player2)
-int currentPlayer = 1;
-
-const char* TITLE = "Untitled_Dxlib_window";
-
-
-void start_dxlib(int WIN_WIDTH, int WIN_HEIGHT, const char* TITLE)
-{
-	ChangeWindowMode(true);
-	SetWindowSizeChangeEnableFlag(true, true);
-	SetMainWindowText((const TCHAR*)TITLE);
-	SetGraphMode(WIN_WIDTH, WIN_HEIGHT, 32);
-	SetWindowSizeExtendRate(1.0);
-	SetBackgroundColor(0, 128, 128);
-	SetDrawScreen(DX_SCREEN_BACK);
-
-	if (DxLib_Init() == -1)
-	{
-		std::cout << "#WARNIN# DxLib init FAILED #WARNIN#";
-	}
-
-}
-
-// 初期化関数
-void InitGame() {
-	// 画像の読み込み
-	bgHandle = LoadGraph("bg.png");
-	siroHandle = LoadGraph("siro.png");
-	kuroHandle = LoadGraph("kuro.png");
-	blankHandle = LoadGraph("blank.png");
-	kuro2Handle = LoadGraph("kuro2.png");
-}
 
 // ターン情報の描画
 void DrawTurnInfo() {
@@ -191,12 +131,6 @@ void DrawBoard(int ms_x,int ms_y) {
 }
 
 
-const std::vector<unsigned int> cellColors = {
-	GetColor(255, 230, 230),
-	GetColor(230, 255, 230),
-	GetColor(230, 230, 255),
-	GetColor(255, 255, 230)
-};
 
 
 void DrawRefinedStringTable(int left, int top, int right, int bottom, const std::vector<std::vector<std::string>>& table, int fontHandle = -1) {
@@ -254,20 +188,13 @@ void DrawRefinedStringTable(int left, int top, int right, int bottom, const std:
 	}
 }
 
-char key = 0;
 
 // メイン関数
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// DxLib 初期化
-	ChangeWindowMode(TRUE);
-	SetGraphMode(WIN_WIDTH, WIN_HEIGHT, 32);
-	if (DxLib_Init() == -1) {
-		return -1;
-	}
 	start_dxlib(WIN_WIDTH, WIN_HEIGHT, TITLE);
 
-	// ゲーム初期化
-	InitGame();
+	
 
 
 
@@ -349,7 +276,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 						key = static_cast<char>(i);
 
-                        send_answer(key); // 押されたキーコードを送信
+                        nw::send_answer(key); // 押されたキーコードを送信
 						put == true;
                         break; // 最初に押されたキーだけを処理
                     }
@@ -371,7 +298,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		int x1 = 0, y1 = 0, x2 = WIN_HEIGHT, y2 = WIN_WIDTH;
 
-		auto question = rsv_question();
+		auto question = nw::rsv_question();
 	std::vector<std::vector<std::string>> table = {
 		{question.at(0)},
 		{question.at(1), question.at(2)},
@@ -408,3 +335,32 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	DxLib_End();
 	return 0;
 }
+
+
+
+
+void start_dxlib(int WIN_WIDTH, int WIN_HEIGHT, const char* TITLE)
+{
+	ChangeWindowMode(true);
+	SetWindowSizeChangeEnableFlag(true, true);
+	SetMainWindowText((const TCHAR*)TITLE);
+	SetGraphMode(WIN_WIDTH, WIN_HEIGHT, 32);
+	SetWindowSizeExtendRate(1.0);
+	SetBackgroundColor(0, 128, 128);
+	SetDrawScreen(DX_SCREEN_BACK);
+	ChangeWindowMode(TRUE);
+	SetGraphMode(WIN_WIDTH, WIN_HEIGHT, 32);
+
+	if (DxLib_Init() == -1)
+	{
+		std::cout << "#WARNIN# DxLib init FAILED #WARNIN#";
+	}
+	// 画像の読み込み
+	bgHandle = LoadGraph("bg.png");
+	siroHandle = LoadGraph("siro.png");
+	kuroHandle = LoadGraph("kuro.png");
+	blankHandle = LoadGraph("blank.png");
+	kuro2Handle = LoadGraph("kuro2.png");
+
+}
+
