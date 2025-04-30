@@ -6,7 +6,6 @@
 #include <iostream>
 #include <algorithm>
 #include<array>
-#include <letters>
 #include "nw.h"
 
 

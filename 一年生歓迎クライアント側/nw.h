@@ -6,6 +6,7 @@ namespace nw
 	extern int  net_handle;      // ネットワークハンドル
 	extern char rcv_buf[1024];   // 受信用バッファ
 	extern char snd_buf[1024];   // 送信用バッファ
+	extern int port;///ポート番号
 
 	std::array<std::string, 5> rsv_question();
 
@@ -25,9 +26,17 @@ namespace nw
 /// <returns></returns>
 int update_board(std::vector<std::vector<int>>& board);
 
+int CustomSocketInit(int8_t IP1, int8_t IP2, int8_t IP3, int8_t IP4);
 
+void CustomSocketEnd();
 
+void rsvmsg();
+void sndmsg();
 
 }
+
+
+
+
 
 
