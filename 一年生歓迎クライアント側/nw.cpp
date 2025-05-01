@@ -172,33 +172,6 @@ void nw::CustomSocketEnd() {
 }
 
 
-void nw::rsvmsg() {
-
-	// 変数定義
-	int data_size;               // 受信データ時のデータサイズ
-
-	// 取得していない受信データ量を得る
-	data_size = GetNetWorkDataLength(net_handle);
-
-	// 受信データ量が0より大きい場合
-	if (data_size > 0) {
-
-		// バッファクリア
-		memset(rcv_buf, 0, sizeof(rcv_buf));
-
-		// 受信したデータをバッファに取得
-
-		// サーバ側にデータ送信
-
-		NetWorkSend(net_handle, snd_buf.c_str(), snd_buf.length());
-
-	}
-
-}
-
-void nw::sndmsg() {
-}
-
 
 /*
 
