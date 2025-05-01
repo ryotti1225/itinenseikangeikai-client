@@ -1,4 +1,5 @@
 #pragma once
+#define min min
 
 #include "Dxlib/DxLib.h"
 #include <vector>
