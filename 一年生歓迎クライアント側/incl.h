@@ -6,6 +6,7 @@
 #include <iostream>
 #include <algorithm>
 #include<array>
+#include"json.hpp"
 #include "nw.h"
 
 
@@ -27,7 +28,8 @@ extern const char* TITLE;
 extern char key;
 extern const std::vector<unsigned int> cellColors;
 
-
-
+extern int putx; 
+extern int puty;
+extern std::string rsv;
 
 

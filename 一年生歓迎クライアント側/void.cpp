@@ -17,6 +17,11 @@ std::vector<std::vector<int>> board(BOARD_SIZE, std::vector<int>(BOARD_SIZE, 0))
 int currentPlayer = 1;
 const char* TITLE = "Untitled_Dxlib_window";
 char key = 0;
+
+int putx = -1;
+int puty = -1;
+std::string rsv = "";
+
 const std::vector<unsigned int> cellColors = {
 	GetColor(255, 230, 230),
 	GetColor(230, 255, 230),
@@ -192,6 +197,13 @@ void DrawRefinedStringTable(int left, int top, int right, int bottom, const std:
 // メイン関数
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// DxLib 初期化
+
+	AllocConsole();
+	FILE* stream;
+	freopen_s(&stream, "CONIN$", "r", stdin);
+	freopen_s(&stream, "CONOUT$", "w", stdout);
+
+
 	start_dxlib(WIN_WIDTH, WIN_HEIGHT, TITLE);
 
 	
@@ -243,6 +255,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			///おいてなかったら置く＆判定
 			if (board[gridY][gridX] == 0) {
 				board[gridY][gridX] = currentPlayer;
+				putx = gridX;
+				puty = gridY;
 				currentPlayer = (currentPlayer == 1) ? 2 : 1;
 
 				if (Judge(gridY, gridX, board))
@@ -266,22 +280,33 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				gridY = -1;
 			}
 
-            if (!put) {
-                char keys[256];
-                GetHitKeyStateAll(keys); // 全キーの状態を取得
+			if (!put) {
 
-                for (int i = 0; i < 256; ++i) {
-                    if (keys[i]) { // キーが押されている場合
-                        put = true;
+				if (CheckHitKey(KEY_INPUT_A) == 1) {
+					key = 'a'; put = true;
+				}
+				if (CheckHitKey(KEY_INPUT_B) == 1) {
+					key = 'b'; put = true;
+				}
+				if (CheckHitKey(KEY_INPUT_C) == 1) {
+					key = 'c'; put = true;
+				}
+				if (CheckHitKey(KEY_INPUT_D)==1)
+				{
+					key = 'd'; put = true;
+				}
+				if (key!=0)
+				{
+						nw::send(key); // 押されたキーコードを送信
 
-						key = static_cast<char>(i);
+				}
 
-                        nw::send_answer(key); // 押されたキーコードを送信
+						key = 0;
+
 						put == true;
-                        break; // 最初に押されたキーだけを処理
-                    }
-                }
-            }
+					
+				
+			}
 			
 
 		// 盤面の描画
@@ -327,8 +352,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		std::string tmp = "key input:" + std::to_string(key);
 
 		DrawStringToHandle(30, 20, tmp.c_str(), GetColor(200, 200, 200), fontHandle);
-
-
+		
 		ScreenFlip();
 	}
 
@@ -361,6 +385,15 @@ void start_dxlib(int WIN_WIDTH, int WIN_HEIGHT, const char* TITLE)
 	kuroHandle = LoadGraph("kuro.png");
 	blankHandle = LoadGraph("blank.png");
 	kuro2Handle = LoadGraph("kuro2.png");
+
+	if (nw::CustomSocketInit(192, 168, 7, 57) == -1) {
+		std::cout << "#WARNIN# Socket init FAILED #WARNIN#";
+		exit(1);
+	}
+	else
+	{
+		std::cout << "#INFO# Socket init SUCCESS #INFO#";
+	}
 
 }
 

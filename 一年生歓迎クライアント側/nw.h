@@ -2,11 +2,14 @@
 
 namespace nw
 {
+	using namespace nlohmann;
+
 
 	extern int  net_handle;      // ネットワークハンドル
 	extern char rcv_buf[1024];   // 受信用バッファ
-	extern char snd_buf[1024];   // 送信用バッファ
+	extern std::string snd_buf;   // 送信用バッファ
 	extern int port;///ポート番号
+	extern json j;
 
 	std::array<std::string, 5> rsv_question();
 
@@ -16,7 +19,7 @@ namespace nw
 /// </summary>
 /// <param name="answer">答え</param>
 /// <returns></returns>
-	int send_answer(char answer);
+	int send(char answer);
 
 /// <summary>
 /// 盤面を書き換える
