@@ -32,5 +32,5 @@ extern const std::vector<unsigned int> cellColors;
 extern int putx; 
 extern int puty;
 extern std::string rsv;
-
+extern bool taiki;
 

@@ -17,24 +17,26 @@ extern std::string rsv;
 
 
 std::array<std::string, 5> nw::rsv_question() {
-    if (j.contains("question") && j["question"].contains("question") && 
-        j["question"].contains("choices") && j["question"]["choices"].is_array()) {
-        
-        std::array<std::string, 5> result;
-        // 質問文を配列の最初に設定
-        result[0] = j["question"]["question"].get<std::string>();
-        
-        // 選択肢を配列に設定
-        auto& choices = j["question"]["choices"];
+	if (j.contains("question") && j["question"].contains("question") && 
+		j["question"].contains("choices") && j["question"]["choices"].is_array()) {
+		
+		std::array<std::string, 5> result;
+		// 質問文を配列の最初に設定
+		result[0] = j["question"]["question"].get<std::string>();
+		
+		char choise = 'A';
+		// 選択肢を配列に設定
+		auto& choices = j["question"]["choices"];
 		for (int i = 0; i < std::min(choices.size(), size_t(4)); ++i) {
-            result[i + 1] = choices[i].get<std::string>();
-        }
-        
-        return result;
-    }
-    
-    // JSONデータが不正な場合のデフォルト値
-    return { "問題を取得できませんでした", "", "", "", "" };
+			result[i + 1] = choise+" "+ choices[i].get<std::string>();
+			choise++;
+		}
+		
+		return result;
+	}
+	
+	// JSONデータが不正な場合のデフォルト値
+	return { "問題を取得できませんでした", "A ", "B ", "C ", "D " };
 }
 
 /// <summary>
@@ -44,59 +46,59 @@ std::array<std::string, 5> nw::rsv_question() {
 /// <param name="answer">答え</param>
 /// <returns></returns>
 int nw::send(char answer) {
-    using namespace std::string_literals;
+	using namespace std::string_literals;
 
-    try {
-        // 受信したJSONデータ（rsv）をパース
-        if (!rsv.empty()) {
-            j = json::parse(rsv);
-        }
+	try {
+		// 受信したJSONデータ（rsv）をパース
+		if (!rsv.empty()) {
+			j = json::parse(rsv);
+		}
 
-        // 以下、既存のコード
-        json mapArray = json::array();
+		// 以下、既存のコード
+		json mapArray = json::array();
 
-        for (const auto& row : board) {
-            std::string line;
-            for (int cell : row) {
-                switch (cell) {
-                case 0: line += 'o'; break;  // 空白
-                case 1: line += 'a'; break;  // 黒
-                case 2: line += 'b'; break;  // 白
-                default: line += 'o'; break; // その他も空白扱い
-                }
-            }
-            mapArray.push_back(line);
-        }
+		for (const auto& row : board) {
+			std::string line;
+			for (int cell : row) {
+				switch (cell) {
+				case 0: line += 'o'; break;  // 空白
+				case 1: line += 'a'; break;  // 黒
+				case 2: line += 'b'; break;  // 白
+				default: line += 'o'; break; // その他も空白扱い
+				}
+			}
+			mapArray.push_back(line);
+		}
 
-        j["map"] = mapArray;
+		j["map"] = mapArray;
 
-        if (answer <= 'a' && answer >= 'd' || 1) {
-            j["replyAns"] = std::string(1, char(answer));
-        }
+		if (answer <= 'a' && answer >= 'd' || 1) {
+			j["replyAns"] = std::string(1, char(answer));
+		}
 
-        j["coordinate"] = json::array();
-        j["coordinate"] = { { putx,puty } };
+		j["coordinate"] = json::array();
+		j["coordinate"] = { { putx,puty } };
 
-        j["takenResTime"] = 3;///後で書く
+		j["takenResTime"] = 3;///後で書く
 
-        snd_buf = j.dump();
+		snd_buf = j.dump();
 
-        NetWorkRecv(net_handle, rcv_buf, sizeof(rcv_buf));
+		NetWorkRecv(net_handle, rcv_buf, sizeof(rcv_buf));
 
-        rsv = rcv_buf;
-        std::cout << rsv << std::endl;
-        std::cout << j.dump() << std::endl;
+		rsv = rcv_buf;
+		std::cout << rsv << std::endl;
+		std::cout << j.dump() << std::endl;
 
-        update_board(board);
+		update_board(board);
 
-        NetWorkSend(net_handle, snd_buf.c_str(), snd_buf.length());
+		NetWorkSend(net_handle, snd_buf.c_str(), snd_buf.length());
 
-        return 0;
-    }
-    catch (const json::parse_error& e) {
-        std::cerr << "JSON parse error: " << e.what() << std::endl;
-        return -1;
-    }
+		return 0;
+	}
+	catch (const json::parse_error& e) {
+		std::cerr << "JSON parse error: " << e.what() << std::endl;
+		return -1;
+	}
 }
 
 

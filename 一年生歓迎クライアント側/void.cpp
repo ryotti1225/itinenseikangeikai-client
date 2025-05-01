@@ -22,6 +22,8 @@ int putx = -1;
 int puty = -1;
 std::string rsv = "";
 
+bool taiki = true;
+
 const std::vector<unsigned int> cellColors = {
 	GetColor(255, 230, 230),
 	GetColor(230, 255, 230),
@@ -340,7 +342,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			DrawBox(y1, x1, y2, x2, GetColor(0, 0, 0), true);
 			SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255);
 		}
-		else {
+		if(!put) {
 
 			SetDrawBlendMode(DX_BLENDMODE_ALPHA, 128);
 			DrawBox(y1, x1, y2, x2, GetColor(0, 0, 0), true);
