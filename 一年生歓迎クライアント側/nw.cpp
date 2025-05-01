@@ -49,7 +49,7 @@ int nw::send(char answer) {
 
 	if (answer<='a'&&answer>='d'||1)
 	{
-		j["replyAns"] = char(answer);
+		j["replyAns"] = std::string(1, char(answer));
 
 	}
 	
