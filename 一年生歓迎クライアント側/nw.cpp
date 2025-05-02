@@ -113,7 +113,7 @@ int nw::send(char answer)
 
 		j["takenResTime"] = 3; /// Œã‚Å‘‚­
 
-		snd_buf = j.dump()+"\n";
+		snd_buf = j.dump()+"\0";
 
 		///rsv_buf init
 		rcv_buf[0] = 0;
