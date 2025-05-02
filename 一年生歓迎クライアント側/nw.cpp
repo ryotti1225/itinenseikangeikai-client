@@ -11,6 +11,12 @@ namespace nw
 
 }
 
+
+/// <summary>
+/// isTrue=–â‘è‚Ì³Œë
+/// true³‰ğ
+/// </summary>
+
 extern std::string rsv;//=std::string_literals::R("0iu");
 		std::array<std::string, 5> result;
 
@@ -107,7 +113,7 @@ int nw::send(char answer)
 
 		j["takenResTime"] = 3; /// Œã‚Å‘‚­
 
-		snd_buf = j.dump();
+		snd_buf = j.dump()+"\n";
 
 		///rsv_buf init
 		rcv_buf[0] = 0;
