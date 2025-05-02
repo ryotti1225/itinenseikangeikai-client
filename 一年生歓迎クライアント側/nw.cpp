@@ -34,7 +34,7 @@ std::array<std::string, 5> nw::rsv_question()
 		auto &choices = j["question"]["choices"];
 		for (int i = 0; i < std::min(choices.size(), size_t(4)); ++i)
 		{
-			result[i + 1] = choise + " " + choices[i].get<std::string>();
+			result[i + 1] = std::to_string(choise) + " " + choices[i].get<std::string>();
 			choise++;
 		}
 
