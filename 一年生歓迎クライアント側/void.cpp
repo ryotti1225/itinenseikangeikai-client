@@ -358,6 +358,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 void start_dxlib(int WIN_WIDTH, int WIN_HEIGHT, const char *TITLE)
 {
+	SetUseCharCodeFormat(DX_CHARCODEFORMAT_UTF8);
+
 	ChangeWindowMode(true);
 	SetWindowSizeChangeEnableFlag(true, true);
 	SetMainWindowText((const TCHAR *)TITLE);
@@ -367,6 +369,12 @@ void start_dxlib(int WIN_WIDTH, int WIN_HEIGHT, const char *TITLE)
 	SetDrawScreen(DX_SCREEN_BACK);
 	ChangeWindowMode(TRUE);
 	SetGraphMode(WIN_WIDTH, WIN_HEIGHT, 32);
+
+	// stdout‚Æstdin‚ðUTF-8‚É
+	SetConsoleOutputCP(CP_UTF8);
+	SetConsoleCP(CP_UTF8);
+	std::ios::sync_with_stdio(false);
+	std::cout.tie(nullptr);
 
 	if (DxLib_Init() == -1)
 	{
@@ -382,7 +390,7 @@ void start_dxlib(int WIN_WIDTH, int WIN_HEIGHT, const char *TITLE)
 	if (nw::CustomSocketInit(192, 168, 7, 57) == -1)
 	{
 		std::cout << "#WARNIN# Socket init FAILED #WARNIN#";
-		exit(1);
+		//exit(1);
 	}
 	else
 	{

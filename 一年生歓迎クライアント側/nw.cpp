@@ -11,7 +11,8 @@ namespace nw
 
 }
 
-extern std::string rsv;
+extern std::string rsv;//=std::string_literals::R("0iu");
+		std::array<std::string, 5> result;
 
 std::array<std::string, 5> nw::rsv_question()
 {
@@ -19,7 +20,6 @@ std::array<std::string, 5> nw::rsv_question()
 		j["question"].contains("choices") && j["question"]["choices"].is_array())
 	{
 
-		std::array<std::string, 5> result;
 		// éøñ‚ï∂ÇîzóÒÇÃç≈èâÇ…ê›íË
 		result[0] = j["question"]["question"].get<std::string>();
 
@@ -48,6 +48,10 @@ std::array<std::string, 5> nw::rsv_question()
 int nw::send(char answer)
 {
 	using namespace std::string_literals;
+
+	json empty;
+
+	j = empty;
 
 	try
 	{
@@ -86,9 +90,16 @@ int nw::send(char answer)
 
 		j["map"] = mapArray;
 
-		if (answer <= 'a' && answer >= 'd' || 1)
+		try
 		{
-			j["replyAns"] = std::string(1, char(answer));
+			
+			j["replyAns"] = result[answer - 'a' + 1];
+
+
+		}
+		catch (const std::exception&)
+		{
+
 		}
 
 		j["coordinate"] = json::array();
@@ -98,11 +109,14 @@ int nw::send(char answer)
 
 		snd_buf = j.dump();
 
+		///rsv_buf init
+		rcv_buf[0] = 0;
+
 		NetWorkRecv(net_handle, rcv_buf, sizeof(rcv_buf));
 
 		rsv = rcv_buf;
 		std::cout << rsv << std::endl;
-		std::cout << j.dump() << std::endl;
+		//std::cout << j.dump() << std::endl;
 
 		update_board(board);
 
@@ -188,7 +202,7 @@ int nw::CustomSocketInit(int8_t IP1, int8_t IP2, int8_t IP3, int8_t IP4)
 	if (net_handle == -1)
 	{
 		// àŸèÌèIóπ
-		// return -1;
+		return -1;
 	}
 
 	return 0;

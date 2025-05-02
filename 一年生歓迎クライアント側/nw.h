@@ -11,7 +11,7 @@ namespace nw
 	extern int port;///ポート番号
 	extern json j;
 
-	std::array<std::string, 5> rsv_question();
+	extern std::array<std::string, 5> rsv_question();
 
 	/// <summary>
 /// 問題の解答を送信する
