@@ -360,7 +360,7 @@ void start_dxlib(int WIN_WIDTH, int WIN_HEIGHT, const char *TITLE)
 {
 	SetUseCharCodeFormat(DX_CHARCODEFORMAT_UTF8);
 	SetUseDirect3DVersion(DX_DIRECT3D_9);
-
+	SetFullSceneAntiAliasingMode(16, 2);
 	ChangeWindowMode(true);
 	SetWindowSizeChangeEnableFlag(true, true);
 	SetMainWindowText((const TCHAR *)TITLE);
