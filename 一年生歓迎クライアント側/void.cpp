@@ -1,18 +1,18 @@
-#include "incl.h"
+ï»¿#include "incl.h"
 
 bool put = false;
-// ƒEƒBƒ“ƒhƒEƒTƒCƒY
+// ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚µã‚¤ã‚º
 const int WIN_WIDTH = 1280;
 const int WIN_HEIGHT = 960;
-// ƒ}ƒX–Ú‚ÌƒTƒCƒY
+// ãƒã‚¹ç›®ã®ã‚µã‚¤ã‚º
 const int CELL_SIZE = 33;
-// ”Õ–Ê‚ÌƒTƒCƒY
+// ç›¤é¢ã®ã‚µã‚¤ã‚º
 const int BOARD_SIZE = 19;
-// ‰æ‘œƒnƒ“ƒhƒ‹
-int bgHandle, siroHandle, kuroHandle, blankHandle, kuro2Handle; /// ƒ}ƒEƒXƒI[ƒo[‚Ì‰æ‘œ
-// ”Õ–Êƒf[ƒ^ (1=”’, 2=•, 0=‹ó”’)
+// ç”»åƒãƒãƒ³ãƒ‰ãƒ«
+int bgHandle, siroHandle, kuroHandle, blankHandle, kuro2Handle; /// ãƒã‚¦ã‚¹ã‚ªãƒ¼ãƒãƒ¼æ™‚ã®ç”»åƒ
+// ç›¤é¢ãƒ‡ãƒ¼ã‚¿ (1=ç™½, 2=é»’, 0=ç©ºç™½)
 std::vector<std::vector<int>> board(BOARD_SIZE, std::vector<int>(BOARD_SIZE, 0));
-// ƒvƒŒƒCƒ„[ƒ^[ƒ“ (1=Player1, 2=Player2)
+// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚¿ãƒ¼ãƒ³ (1=Player1, 2=Player2)
 int currentPlayer = 1;
 const char *TITLE = "Untitled_Dxlib_window";
 char key = 0;
@@ -31,23 +31,23 @@ const std::vector<unsigned int> cellColors = {
 
 void start_dxlib(int WIN_WIDTH, int WIN_HEIGHT, const char *TITLE);
 
-/// ret true ŒÜ–Ú•À‚×¬—§
-///		false game‘±s
+/// ret true äº”ç›®ä¸¦ã¹æˆç«‹
+///		false gameç¶šè¡Œ
 bool Judge(int x, int y, std::vector<std::vector<int>> &board)
 {
 	int col = board[x][y];
 	if (col == 0)
 		return false;
 
-	// 8•ûŒü‚Ìƒ`ƒFƒbƒN—p‚Ì”z—ñ
-	const int dx[] = {1, 0, 1, -1}; // cA‰¡AÎ‚ßi‰E‰ºjAÎ‚ßi¶‰ºj
+	// 8æ–¹å‘ã®ãƒã‚§ãƒƒã‚¯ç”¨ã®é…åˆ—
+	const int dx[] = {1, 0, 1, -1}; // ç¸¦ã€æ¨ªã€æ–œã‚ï¼ˆå³ä¸‹ï¼‰ã€æ–œã‚ï¼ˆå·¦ä¸‹ï¼‰
 	const int dy[] = {0, 1, 1, 1};
 
 	for (int dir = 0; dir < 4; dir++)
 	{
-		int count = 1; // Œ»İ‚ÌˆÊ’u‚ğ1‚©‚çƒJƒEƒ“ƒgŠJn
+		int count = 1; // ç¾åœ¨ã®ä½ç½®ã‚’1ã‹ã‚‰ã‚«ã‚¦ãƒ³ãƒˆé–‹å§‹
 
-		// ³•ûŒü
+		// æ­£æ–¹å‘
 		for (int i = 1; i < 5; i++)
 		{
 			int nx = x + dx[dir] * i;
@@ -59,7 +59,7 @@ bool Judge(int x, int y, std::vector<std::vector<int>> &board)
 			}
 			count++;
 		}
-		// ‹t•ûŒü
+		// é€†æ–¹å‘
 		for (int i = 1; i < 5; i++)
 		{
 			int nx = x - dx[dir] * i;
@@ -80,43 +80,43 @@ bool Judge(int x, int y, std::vector<std::vector<int>> &board)
 	return false;
 }
 
-// ƒ^[ƒ“î•ñ‚Ì•`‰æ
+// ã‚¿ãƒ¼ãƒ³æƒ…å ±ã®æç”»
 void DrawTurnInfo()
 {
 	std::string turnText = "Turn: Player " + std::to_string(currentPlayer);
 	DrawString(600, 50, turnText.c_str(), GetColor(255, 255, 255));
 }
-// ”Õ–Ê‚Ì•`‰æ
+// ç›¤é¢ã®æç”»
 void DrawBoard(int ms_x, int ms_y)
 {
-	// ”wŒi‰æ‘œ‚Ì•‚Æ‚‚³‚ğæ“¾
+	// èƒŒæ™¯ç”»åƒã®å¹…ã¨é«˜ã•ã‚’å–å¾—
 	int bgWidth, bgHeight;
 	GetGraphSize(bgHandle, &bgWidth, &bgHeight);
 
-	// ”wŒi‚ğ‰æ–Ê’†‰›‚É•`‰æ
+	// èƒŒæ™¯ã‚’ç”»é¢ä¸­å¤®ã«æç”»
 	int bgX = (WIN_WIDTH - bgWidth) / 2;
 	int bgY = ((WIN_HEIGHT - bgHeight) / 2) - 100;
 	DrawGraph(bgX, bgY, bgHandle, TRUE);
 
-	// ”Õ–Ê‚Ì•‚Æ‚‚³‚ğŒvZ
+	// ç›¤é¢ã®å¹…ã¨é«˜ã•ã‚’è¨ˆç®—
 	int boardWidth = BOARD_SIZE * CELL_SIZE;
 	int boardHeight = BOARD_SIZE * CELL_SIZE;
 
-	// ”Õ–Ê‚Ì¶ã‚Ì•`‰æŠJnˆÊ’u‚ğŒvZ
+	// ç›¤é¢ã®å·¦ä¸Šã®æç”»é–‹å§‹ä½ç½®ã‚’è¨ˆç®—
 	int startX = (WIN_WIDTH - boardWidth) / 2;
 	int startY = ((WIN_HEIGHT - boardHeight) / 2) - 100;
 
-	// ”Õ–Ê‚ğ•`‰æ
+	// ç›¤é¢ã‚’æç”»
 	for (int y = 0; y < BOARD_SIZE; ++y)
 	{
 		for (int x = 0; x < BOARD_SIZE; ++x)
 		{
 			int drawX = startX + x * CELL_SIZE;
 			int drawY = startY + y * CELL_SIZE;
-			int drawX2 = drawX + CELL_SIZE; // k¬Œã‚Ì‰E‰ºXÀ•W
-			int drawY2 = drawY + CELL_SIZE; // k¬Œã‚Ì‰E‰ºYÀ•W
+			int drawX2 = drawX + CELL_SIZE; // ç¸®å°å¾Œã®å³ä¸‹Xåº§æ¨™
+			int drawY2 = drawY + CELL_SIZE; // ç¸®å°å¾Œã®å³ä¸‹Yåº§æ¨™
 
-			// ƒ}ƒX‚Ìó‘Ô‚É‰‚¶‚Ä‰æ‘œ‚ğ•`‰æ
+			// ãƒã‚¹ã®çŠ¶æ…‹ã«å¿œã˜ã¦ç”»åƒã‚’æç”»
 			if (board[y][x] == 1)
 			{
 				DrawExtendGraph(drawX, drawY, drawX2, drawY2, siroHandle, TRUE);
@@ -156,7 +156,7 @@ void DrawRefinedStringTable(int left, int top, int right, int bottom, const std:
 
 	for (size_t row = 0; row < rows; ++row)
 	{
-		cols = table[row].size(); // Šes‚Ì—ñ”‚ğæ“¾
+		cols = table[row].size(); // å„è¡Œã®åˆ—æ•°ã‚’å–å¾—
 
 		int columnWidth = tableWidth / (int)cols;
 		int lineHeight = tableHeight / (int)rows;
@@ -167,14 +167,14 @@ void DrawRefinedStringTable(int left, int top, int right, int bottom, const std:
 			int cellY = top + row * lineHeight;
 
 			int bgColor = cellColors[(row + col) % cellColors.size()];
-			int borderColor = GetColor(150, 150, 150); // ”Z‚¢–Ú‚ÌƒOƒŒ[
+			int borderColor = GetColor(150, 150, 150); // æ¿ƒã„ç›®ã®ã‚°ãƒ¬ãƒ¼
 
-			/// ƒZƒ‹‰æ‚è
+			/// ã‚»ãƒ«ç¸å–ã‚Š
 			DrawBox(cellX - 3, cellY - 3, cellX + columnWidth + 3, cellY + lineHeight + 3, borderColor, true);
-			/// ƒZƒ‹”wŒi
+			/// ã‚»ãƒ«èƒŒæ™¯
 			DrawBox(cellX, cellY, cellX + columnWidth, cellY + lineHeight, bgColor, TRUE);
 
-			/// ’†‰›‘µ‚¦{‰e
+			/// ä¸­å¤®æƒãˆï¼‹å½±
 			const std::string &text = table[row][col];
 			int textWidth = GetDrawStringWidthToHandle(text.c_str(), text.size(), fontHandle) + 10;
 			int textHeight = GetFontSize() + 10;
@@ -196,10 +196,10 @@ void DrawRefinedStringTable(int left, int top, int right, int bottom, const std:
 	}
 }
 
-// ƒƒCƒ“ŠÖ”
+// ãƒ¡ã‚¤ãƒ³é–¢æ•°
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
-	// DxLib ‰Šú‰»
+	// DxLib åˆæœŸåŒ–
 
 	AllocConsole();
 	FILE *stream;
@@ -208,43 +208,43 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 	start_dxlib(WIN_WIDTH, WIN_HEIGHT, TITLE);
 
-	int fontHandle = CreateFontToHandle("UD ƒfƒWƒ^ƒ‹ ‹³‰È‘‘Ì N", 28, 6, DX_FONTTYPE_ANTIALIASING_8X8);
+	int fontHandle = CreateFontToHandle("UD ãƒ‡ã‚¸ã‚¿ãƒ« æ•™ç§‘æ›¸ä½“ N", 28, 6, DX_FONTTYPE_ANTIALIASING_8X8);
 	int left = 112, top = 714, right = 1168, bottom = 957;
 
 	while (ProcessMessage() == 0)
 	{
 		ClearDrawScreen();
 
-		// ƒ^[ƒ“î•ñ‚Ì•`‰æ
+		// ã‚¿ãƒ¼ãƒ³æƒ…å ±ã®æç”»
 		DrawTurnInfo();
 
-		// “ü—Íˆ—
+		// å…¥åŠ›å‡¦ç†
 		if (CheckHitKey(KEY_INPUT_ESCAPE))
 		{
 			break;
 		}
 
-		// ƒ}ƒEƒXƒNƒŠƒbƒN‚Å”Õ–Ê‚ğXV
-		// ƒ}ƒEƒXƒNƒŠƒbƒN‚Å”Õ–Ê‚ğXV
+		// ãƒã‚¦ã‚¹ã‚¯ãƒªãƒƒã‚¯ã§ç›¤é¢ã‚’æ›´æ–°
+		// ãƒã‚¦ã‚¹ã‚¯ãƒªãƒƒã‚¯ã§ç›¤é¢ã‚’æ›´æ–°
 		int mouseX, mouseY;
 		GetMousePoint(&mouseX, &mouseY);
 
-		// ”Õ–Ê‚Ì¶ã‚Ì•`‰æŠJnˆÊ’u‚ğŒvZ
+		// ç›¤é¢ã®å·¦ä¸Šã®æç”»é–‹å§‹ä½ç½®ã‚’è¨ˆç®—
 		int boardWidth = BOARD_SIZE * CELL_SIZE;
 		int boardHeight = BOARD_SIZE * CELL_SIZE;
 		int startX = (WIN_WIDTH - boardWidth) / 2;
 		int startY = ((WIN_HEIGHT - boardHeight) / 2) - 100;
-		// ƒ}ƒEƒXÀ•W‚ğ”Õ–Ê‚ÌÀ•W‚É•ÏŠ·
+		// ãƒã‚¦ã‚¹åº§æ¨™ã‚’ç›¤é¢ã®åº§æ¨™ã«å¤‰æ›
 		int gridX = (mouseX - startX) / CELL_SIZE;
 		int gridY = (mouseY - startY) / CELL_SIZE;
 
-		// ”Õ–Ê‚Ì”ÍˆÍ“à‚©Šm”F
+		// ç›¤é¢ã®ç¯„å›²å†…ã‹ç¢ºèª
 		if (gridX >= 0 && gridX < BOARD_SIZE && gridY >= 0 && gridY < BOARD_SIZE)
 		{
 
 			if ((GetMouseInput() & MOUSE_INPUT_LEFT) != 0 && put)
 			{
-				/// ‚¨‚¢‚Ä‚È‚©‚Á‚½‚ç’u‚­•”»’è
+				/// ãŠã„ã¦ãªã‹ã£ãŸã‚‰ç½®ãï¼†åˆ¤å®š
 				if (board[gridY][gridX] == 0)
 				{
 					board[gridY][gridX] = currentPlayer;
@@ -298,7 +298,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 			}
 			if (key != 0)
 			{
-				nw::send(key); // ‰Ÿ‚³‚ê‚½ƒL[ƒR[ƒh‚ğ‘—M
+				nw::send(key); // æŠ¼ã•ã‚ŒãŸã‚­ãƒ¼ã‚³ãƒ¼ãƒ‰ã‚’é€ä¿¡
 			}
 
 			key = 0;
@@ -306,7 +306,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 			put == true;
 		}
 
-		// ”Õ–Ê‚Ì•`‰æ
+		// ç›¤é¢ã®æç”»
 		DrawBoard(gridX, gridY);
 
 		// if (CheckHitKey(KEY_INPUT_LEFT) == 1) left -= 1;
@@ -359,6 +359,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 void start_dxlib(int WIN_WIDTH, int WIN_HEIGHT, const char *TITLE)
 {
 	SetUseCharCodeFormat(DX_CHARCODEFORMAT_UTF8);
+	SetUseDirect3DVersion(DX_DIRECT3D_9);
 
 	ChangeWindowMode(true);
 	SetWindowSizeChangeEnableFlag(true, true);
@@ -370,7 +371,7 @@ void start_dxlib(int WIN_WIDTH, int WIN_HEIGHT, const char *TITLE)
 	ChangeWindowMode(TRUE);
 	SetGraphMode(WIN_WIDTH, WIN_HEIGHT, 32);
 
-	// stdout‚Æstdin‚ğUTF-8‚É
+	// stdoutã¨stdinã‚’UTF-8ã«
 	SetConsoleOutputCP(CP_UTF8);
 	SetConsoleCP(CP_UTF8);
 	std::ios::sync_with_stdio(false);
@@ -380,14 +381,14 @@ void start_dxlib(int WIN_WIDTH, int WIN_HEIGHT, const char *TITLE)
 	{
 		std::cout << "#WARNIN# DxLib init FAILED #WARNIN#";
 	}
-	// ‰æ‘œ‚Ì“Ç‚İ‚İ
+	// ç”»åƒã®èª­ã¿è¾¼ã¿
 	bgHandle = LoadGraph("bg.png");
 	siroHandle = LoadGraph("siro.png");
 	kuroHandle = LoadGraph("kuro.png");
 	blankHandle = LoadGraph("blank.png");
 	kuro2Handle = LoadGraph("kuro2.png");
 
-	if (nw::CustomSocketInit(192, 168, 7, 57) == -1)
+	if (nw::CustomSocketInit(192, 168, 3,239) == -1)
 	{
 		std::cout << "#WARNIN# Socket init FAILED #WARNIN#";
 		//exit(1);
@@ -395,5 +396,16 @@ void start_dxlib(int WIN_WIDTH, int WIN_HEIGHT, const char *TITLE)
 	else
 	{
 		std::cout << "#INFO# Socket init SUCCESS #INFO#";
+
+		system("chcp 65001 > nul");
+		while (nw::get_game_status() != "start") {}
+		std::cout << "aaa" << std::endl;
+		system("chcp 65001 > nul");
+
+		nw::send_game_start();
+
+		system("chcp 932 > nul");
+
+		std::cout << "ã‚µãƒ¼ãƒãƒ¼ã«é€ä¿¡ã—ãŸã§" << std::endl;
 	}
 }

@@ -1,36 +1,65 @@
-#include "incl.h"
+ï»¿#include "incl.h"
 
 namespace nw
 {
-	int net_handle = 0;		  // ƒlƒbƒgƒ[ƒNƒnƒ“ƒhƒ‹‚Ì’è‹`
-	char rcv_buf[1024] = {0}; // óM—pƒoƒbƒtƒ@‚Ì’è‹`
-	std::string snd_buf = ""; // ‘—M—pƒoƒbƒtƒ@‚Ì’è‹`
+	int net_handle = 0;		  // ãƒãƒƒãƒˆãƒ¯ãƒ¼ã‚¯ãƒãƒ³ãƒ‰ãƒ«ã®å®šç¾©
+	char rcv_buf[1024] = {0}; // å—ä¿¡ç”¨ãƒãƒƒãƒ•ã‚¡ã®å®šç¾©
+	std::string snd_buf = ""; // é€ä¿¡ç”¨ãƒãƒƒãƒ•ã‚¡ã®å®šç¾©
 
-	int port = 12345; /// ƒ|[ƒg”Ô†
+	int port = 12345; /// ãƒãƒ¼ãƒˆç•ªå·
 	json j;
 
 }
 
 
 /// <summary>
-/// isTrue=–â‘è‚Ì³Œë
-/// true³‰ğ
+/// isTrue=å•é¡Œã®æ­£èª¤
+/// trueæ­£è§£
 /// </summary>
 
 extern std::string rsv;//=std::string_literals::R("0iu");
-		std::array<std::string, 5> result;
+std::array<std::string, 5> result;
 
+/*è¿½åŠ éƒ¨åˆ†*/
+void nw::send_game_start() {
+	nlohmann::json j1 = {
+		{"go","yes"}
+	};
+
+	snd_buf = j1.dump() + '\b';
+
+	NetWorkSend(net_handle, snd_buf.c_str(), snd_buf.length());
+	
+}
+
+std::string nw::get_game_status() {
+	NetWorkRecv(net_handle, rcv_buf, sizeof(rcv_buf));
+	rsv = rcv_buf;
+
+	try {
+		nlohmann::json j1 = nlohmann::json::parse(rsv);
+		std::string status = j1["gameStatus"];
+		return status;
+	}
+	catch (const std::exception& ex) {
+		std::cerr << "ERROR : " << ex.what() << std::endl;
+		return "";
+	}
+
+
+}
+/*---------------------------------*/
 std::array<std::string, 5> nw::rsv_question()
 {
 	if (j.contains("question") && j["question"].contains("question") &&
 		j["question"].contains("choices") && j["question"]["choices"].is_array())
 	{
 
-		// ¿–â•¶‚ğ”z—ñ‚ÌÅ‰‚Éİ’è
+		// è³ªå•æ–‡ã‚’é…åˆ—ã®æœ€åˆã«è¨­å®š
 		result[0] = j["question"]["question"].get<std::string>();
 
 		char choise = 'A';
-		// ‘I‘ğˆ‚ğ”z—ñ‚Éİ’è
+		// é¸æŠè‚¢ã‚’é…åˆ—ã«è¨­å®š
 		auto &choices = j["question"]["choices"];
 		for (int i = 0; i < std::min(choices.size(), size_t(4)); ++i)
 		{
@@ -41,15 +70,15 @@ std::array<std::string, 5> nw::rsv_question()
 		return result;
 	}
 
-	// JSONƒf[ƒ^‚ª•s³‚Èê‡‚ÌƒfƒtƒHƒ‹ƒg’l
-	return {"–â‘è‚ğæ“¾‚Å‚«‚Ü‚¹‚ñ‚Å‚µ‚½", "A ", "B ", "C ", "D "};
+	// JSONãƒ‡ãƒ¼ã‚¿ãŒä¸æ­£ãªå ´åˆã®ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆå€¤
+	return {"å•é¡Œã‚’å–å¾—ã§ãã¾ã›ã‚“ã§ã—ãŸ", "A ", "B ", "C ", "D "};
 }
 
 /// <summary>
-/// –â‘è‚Ì‰ğ“š‚ğ‘—M‚·‚é
-/// ‚’‚™‚‚”‚”‚‰‚P‚Q‚P‚T‚æ‚ë‚µ‚­
+/// å•é¡Œã®è§£ç­”ã‚’é€ä¿¡ã™ã‚‹
+/// ï½’ï½™ï½ï½”ï½”ï½‰ï¼‘ï¼’ï¼‘ï¼•ã‚ˆã‚ã—ã
 /// </summary>
-/// <param name="answer">“š‚¦</param>
+/// <param name="answer">ç­”ãˆ</param>
 /// <returns></returns>
 int nw::send(char answer)
 {
@@ -61,13 +90,13 @@ int nw::send(char answer)
 
 	try
 	{
-		// óM‚µ‚½JSONƒf[ƒ^irsvj‚ğƒp[ƒX
+		// å—ä¿¡ã—ãŸJSONãƒ‡ãƒ¼ã‚¿ï¼ˆrsvï¼‰ã‚’ãƒ‘ãƒ¼ã‚¹
 		if (!rsv.empty())
 		{
 			j = json::parse(rsv);
 		}
 
-		// ˆÈ‰ºAŠù‘¶‚ÌƒR[ƒh
+		// ä»¥ä¸‹ã€æ—¢å­˜ã®ã‚³ãƒ¼ãƒ‰
 		json mapArray = json::array();
 
 		for (const auto &row : board)
@@ -79,16 +108,16 @@ int nw::send(char answer)
 				{
 				case 0:
 					line += 'o';
-					break; // ‹ó”’
+					break; // ç©ºç™½
 				case 1:
 					line += 'a';
-					break; // •
+					break; // é»’
 				case 2:
 					line += 'b';
-					break; // ”’
+					break; // ç™½
 				default:
 					line += 'o';
-					break; // ‚»‚Ì‘¼‚à‹ó”’ˆµ‚¢
+					break; // ãã®ä»–ã‚‚ç©ºç™½æ‰±ã„
 				}
 			}
 			mapArray.push_back(line);
@@ -99,7 +128,7 @@ int nw::send(char answer)
 		try
 		{
 			
-			j["replyAns"] = result[answer - 'a' + 1];
+			j["replyAns"] = std::string(1, static_cast<char>(std::toupper(answer)));
 
 
 		}
@@ -111,9 +140,11 @@ int nw::send(char answer)
 		j["coordinate"] = json::array();
 		j["coordinate"] = {{putx, puty}};
 
-		j["takenResTime"] = 3; /// Œã‚Å‘‚­
+		j["takenResTime"] = 3; /// å¾Œã§æ›¸ã
 
-		snd_buf = j.dump()+"\0";
+		snd_buf = j.dump()+"\b";
+		std::cout << std::endl;
+		std::cout << snd_buf << std::endl;
 
 		///rsv_buf init
 		rcv_buf[0] = 0;
@@ -138,19 +169,19 @@ int nw::send(char answer)
 }
 
 /// <summary>
-/// ”Õ–Ê‚ğ‘‚«Š·‚¦‚é
-/// ‚’‚™‚‚”‚”‚‰‚P‚Q‚P‚T‚æ‚ë‚µ‚­
+/// ç›¤é¢ã‚’æ›¸ãæ›ãˆã‚‹
+/// ï½’ï½™ï½ï½”ï½”ï½‰ï¼‘ï¼’ï¼‘ï¼•ã‚ˆã‚ã—ã
 /// </summary>
 /// <param name="board"></param>
 /// <returns></returns>
 int nw::update_board(std::vector<std::vector<int>> &board_old)
 {
-	static std::vector<std::vector<int>> new_board = board_old; /// V‚µ‚¢”Õ–Ê
+	static std::vector<std::vector<int>> new_board = board_old; /// æ–°ã—ã„ç›¤é¢
 
 	std::vector<std::vector<int>> board;
 	if (!j.contains("map") || !j["map"].is_array())
 	{
-		return -1; // ‹ó‚Ì”Õ–Ê‚ğ•Ô‚·
+		return -1; // ç©ºã®ç›¤é¢ã‚’è¿”ã™
 	}
 
 	for (const auto &rowJson : j["map"])
@@ -166,16 +197,16 @@ int nw::update_board(std::vector<std::vector<int>> &board_old)
 			{
 			case 'o':
 				row.push_back(0);
-				break; // ‹ó”’
+				break; // ç©ºç™½
 			case 'a':
 				row.push_back(1);
-				break; // •
+				break; // é»’
 			case 'b':
 				row.push_back(2);
-				break; // ”’
+				break; // ç™½
 			default:
 				row.push_back(0);
-				break; // ‚»‚Ì‘¼‚à‹ó”’ˆµ‚¢
+				break; // ãã®ä»–ã‚‚ç©ºç™½æ‰±ã„
 			}
 		}
 		board.push_back(row);
@@ -189,25 +220,27 @@ int nw::update_board(std::vector<std::vector<int>> &board_old)
 int nw::CustomSocketInit(int8_t IP1, int8_t IP2, int8_t IP3, int8_t IP4)
 {
 
-	// •Ï”’è‹`
-	IPDATA ip; // Ú‘±—pIPƒAƒhƒŒƒXƒf[ƒ^
+	// å¤‰æ•°å®šç¾©
+	IPDATA ip; // æ¥ç¶šç”¨IPã‚¢ãƒ‰ãƒ¬ã‚¹ãƒ‡ãƒ¼ã‚¿
 
-	// DXƒ‰ƒCƒu“Æ©‚Ìsocketd—l‚Ì‹@”\‚ğg—p‚µ‚È‚¢
+	// DXãƒ©ã‚¤ãƒ–ç‹¬è‡ªã®socketä»•æ§˜ã®æ©Ÿèƒ½ã‚’ä½¿ç”¨ã—ãªã„
 	SetUseDXNetWorkProtocol(FALSE);
 
-	// IPƒAƒhƒŒƒX‚ğİ’è
+	// IPã‚¢ãƒ‰ãƒ¬ã‚¹ã‚’è¨­å®š
 	ip.d1 = IP1;
 	ip.d2 = IP2;
 	ip.d3 = IP3;
 	ip.d4 = IP4;
 
-	// ’ÊM‚ğŠm—§
+	// é€šä¿¡ã‚’ç¢ºç«‹
 	net_handle = ConnectNetWork(ip, port);
 
-	// ƒnƒ“ƒhƒ‹‚Ì³í«Šm”F
+	
+
+	// ãƒãƒ³ãƒ‰ãƒ«ã®æ­£å¸¸æ€§ç¢ºèª
 	if (net_handle == -1)
 	{
-		// ˆÙíI—¹
+		// ç•°å¸¸çµ‚äº†
 		return -1;
 	}
 

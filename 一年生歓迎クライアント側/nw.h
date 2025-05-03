@@ -1,29 +1,34 @@
-#pragma once
+ï»¿#pragma once
 
 namespace nw
 {
 	using namespace nlohmann;
 
 
-	extern int  net_handle;      // ƒlƒbƒgƒ[ƒNƒnƒ“ƒhƒ‹
-	extern char rcv_buf[1024];   // óM—pƒoƒbƒtƒ@
-	extern std::string snd_buf;   // ‘—M—pƒoƒbƒtƒ@
-	extern int port;///ƒ|[ƒg”Ô†
+	extern int  net_handle;      // ãƒãƒƒãƒˆãƒ¯ãƒ¼ã‚¯ãƒãƒ³ãƒ‰ãƒ«
+	extern char rcv_buf[1024];   // å—ä¿¡ç”¨ãƒãƒƒãƒ•ã‚¡
+	extern std::string snd_buf;   // é€ä¿¡ç”¨ãƒãƒƒãƒ•ã‚¡
+	extern int port;///ãƒãƒ¼ãƒˆç•ªå·
 	extern json j;
 
 	extern std::array<std::string, 5> rsv_question();
 
+	/*è¿½åŠ é–¢æ•°*/
+	void send_game_start();
+	std::string get_game_status();
+	/**-----------**/
+
 	/// <summary>
-/// –â‘è‚Ì‰ğ“š‚ğ‘—M‚·‚é
-/// ‚’‚™‚‚”‚”‚‰‚P‚Q‚P‚T‚æ‚ë‚µ‚­
+/// å•é¡Œã®è§£ç­”ã‚’é€ä¿¡ã™ã‚‹
+/// ï½’ï½™ï½ï½”ï½”ï½‰ï¼‘ï¼’ï¼‘ï¼•ã‚ˆã‚ã—ã
 /// </summary>
-/// <param name="answer">“š‚¦</param>
+/// <param name="answer">ç­”ãˆ</param>
 /// <returns></returns>
 	int send(char answer);
 
 /// <summary>
-/// ”Õ–Ê‚ğ‘‚«Š·‚¦‚é
-/// ‚’‚™‚‚”‚”‚‰‚P‚Q‚P‚T‚æ‚ë‚µ‚­ 
+/// ç›¤é¢ã‚’æ›¸ãæ›ãˆã‚‹
+/// ï½’ï½™ï½ï½”ï½”ï½‰ï¼‘ï¼’ï¼‘ï¼•ã‚ˆã‚ã—ã 
 /// </summary>
 /// <param name="board"></param>
 /// <returns></returns>
