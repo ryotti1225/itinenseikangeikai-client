@@ -8,6 +8,7 @@
 #include <algorithm>
 #include<array>
 #include<cctype>
+#include<sstream>
 #include"json.hpp"
 #include "nw.h"
 
