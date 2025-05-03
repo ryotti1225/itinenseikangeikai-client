@@ -239,7 +239,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		int gridY = (mouseY - startY) / CELL_SIZE;
 
 		// 盤面の範囲内か確認
-		if (gridX >= 0 && gridX < BOARD_SIZE && gridY >= 0 && gridY < BOARD_SIZE)
+		if (gridX >= 0 && gridX < BOARD_SIZE && gridY >= 0 && gridY < BOARD_SIZE&&put)
 		{
 
 			if ((GetMouseInput() & MOUSE_INPUT_LEFT) != 0 && put)
@@ -260,21 +260,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 					put = false;
 				}
 			}
-		}
-		else
-		{
+		}else{
 			gridX = -1;
 			gridY = -1;
 		}
 
-		if (!put)
+		if (!put)///問題のとき
 		{
-			gridX = -1;
-			gridY = -1;
-		}
-
-		if (!put)
-		{
+			key = 0;
 
 			if (CheckHitKey(KEY_INPUT_A) == 1)
 			{
@@ -300,23 +293,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 			{
 				nw::send(key); // 押されたキーコードを送信
 			}
-
-			key = 0;
-
-			put == true;
 		}
 
 		// 盤面の描画
 		DrawBoard(gridX, gridY);
 
-		// if (CheckHitKey(KEY_INPUT_LEFT) == 1) left -= 1;
-		// if (CheckHitKey(KEY_INPUT_RIGHT) == 1) left += 1;
-		// if (CheckHitKey(KEY_INPUT_UP) == 1) top -= 1;
-		// if (CheckHitKey(KEY_INPUT_DOWN) == 1) top += 1;
-		// if (CheckHitKey(KEY_INPUT_A) == 1) right -= 1;
-		// if (CheckHitKey(KEY_INPUT_D) == 1) right += 1;
-		// if (CheckHitKey(KEY_INPUT_W) == 1) bottom -= 1;
-		// if (CheckHitKey(KEY_INPUT_S) == 1) bottom += 1;
 
 		int x1 = 0, y1 = 0, x2 = WIN_HEIGHT, y2 = WIN_WIDTH;
 
@@ -351,13 +332,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 		ScreenFlip();
 	}
-
+	nw::CustomSocketEnd();
 	DxLib_End();
 	return 0;
 }
 
 void start_dxlib(int WIN_WIDTH, int WIN_HEIGHT, const char *TITLE)
 {
+	std::cout << "#INFO# setting DxLib..." << std::endl;
+
 	SetUseCharCodeFormat(DX_CHARCODEFORMAT_UTF8);
 	SetUseDirect3DVersion(DX_DIRECT3D_9);
 	SetFullSceneAntiAliasingMode(16, 2);
@@ -368,8 +351,9 @@ void start_dxlib(int WIN_WIDTH, int WIN_HEIGHT, const char *TITLE)
 	SetWindowSizeExtendRate(1.0);
 	SetBackgroundColor(0, 128, 128);
 	SetDrawScreen(DX_SCREEN_BACK);
-	ChangeWindowMode(TRUE);
+	ChangeWindowMode(true);
 	SetGraphMode(WIN_WIDTH, WIN_HEIGHT, 32);
+	SetDoubleStartValidFlag(true);
 
 	// stdoutとstdinをUTF-8に
 	SetConsoleOutputCP(CP_UTF8);
@@ -377,18 +361,22 @@ void start_dxlib(int WIN_WIDTH, int WIN_HEIGHT, const char *TITLE)
 	std::ios::sync_with_stdio(false);
 	std::cout.tie(nullptr);
 
+	std::cout << "#INFO# DxLib setting..." << std::endl;
 	if (DxLib_Init() == -1)
 	{
 		std::cout << "#WARNIN# DxLib init FAILED #WARNIN#";
 	}
 	// 画像の読み込み
+
+	std::cout << "#INFO# Loading images..." << std::endl;
 	bgHandle = LoadGraph("bg.png");
 	siroHandle = LoadGraph("siro.png");
 	kuroHandle = LoadGraph("kuro.png");
 	blankHandle = LoadGraph("blank.png");
 	kuro2Handle = LoadGraph("kuro2.png");
 
-	if (nw::CustomSocketInit(192, 168, 3,239) == -1)
+	std::cout << "#info# Trying to connect to server..." << std::endl;
+	if (nw::CustomSocketInit(127, 8, 0,1) == -1)
 	{
 		std::cout << "#WARNIN# Socket init FAILED #WARNIN#";
 		//exit(1);
@@ -398,7 +386,7 @@ void start_dxlib(int WIN_WIDTH, int WIN_HEIGHT, const char *TITLE)
 		std::cout << "#INFO# Socket init SUCCESS #INFO#";
 
 		system("chcp 65001 > nul");
-		while (nw::get_game_status() != "start") {}
+		
 		std::cout << "aaa" << std::endl;
 		system("chcp 65001 > nul");
 
@@ -409,3 +397,17 @@ void start_dxlib(int WIN_WIDTH, int WIN_HEIGHT, const char *TITLE)
 		std::cout << "サーバーに送信したで" << std::endl;
 	}
 }
+		// if (CheckHitKey(KEY_INPUT_LEFT) == 1) left -= 1;
+		// if (CheckHitKey(KEY_INPUT_RIGHT) == 1) left += 1;
+		// if (CheckHitKey(KEY_INPUT_UP) == 1) top -= 1;
+		// if (CheckHitKey(KEY_INPUT_DOWN) == 1) top += 1;
+		// if (CheckHitKey(KEY_INPUT_A) == 1) right -= 1;
+		// if (CheckHitKey(KEY_INPUT_D) == 1) right += 1;
+		// if (CheckHitKey(KEY_INPUT_W) == 1) bottom -= 1;
+		// if (CheckHitKey(KEY_INPUT_S) == 1) bottom += 1;
+
+
+
+
+
+
