@@ -38,6 +38,8 @@ int CustomSocketInit(int8_t IP1, int8_t IP2, int8_t IP3, int8_t IP4);
 
 void CustomSocketEnd();
 
+std::string utf8(std::u8string str);
+
 void rsvmsg();
 void sndmsg();
 

@@ -252,6 +252,10 @@ void nw::CustomSocketEnd()
 	CloseNetWork(net_handle);
 }
 
+std::string nw::utf8(std::u8string str) {
+	return reinterpret_cast<const char*>(str.c_str());
+}
+
 /*
 
 log
