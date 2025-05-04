@@ -151,8 +151,9 @@ void DrawRefinedStringTable(int left, int top, int right, int bottom, const std:
 
 	int tableWidth = right - left;
 	int tableHeight = bottom - top;
-	int mouseX, mouseY;
-	GetMousePoint(&mouseX, &mouseY);
+
+
+	char choise = ' ';
 
 	for (size_t row = 0; row < rows; ++row)
 	{
@@ -175,7 +176,7 @@ void DrawRefinedStringTable(int left, int top, int right, int bottom, const std:
 			DrawBox(cellX, cellY, cellX + columnWidth, cellY + lineHeight, bgColor, TRUE);
 
 			/// 中央揃え＋影
-			const std::string &text = table[row][col];
+			const std::string text = std::string(1,choise) + " " + table[row][col];
 			int textWidth = GetDrawStringWidthToHandle(text.c_str(), text.size(), fontHandle) + 10;
 			int textHeight = GetFontSize() + 10;
 
@@ -192,6 +193,11 @@ void DrawRefinedStringTable(int left, int top, int right, int bottom, const std:
 			DrawStringToHandle(centerX, centerY, text.c_str(), GetColor(0, 0, 0), fontHandle);
 			std::string tmp = "left:" + std::to_string(left) + " top:" + std::to_string(top) + " right:" + std::to_string(right) + " bottom:" + std::to_string(bottom);
 			DrawStringToHandle(0, 0, tmp.c_str(), GetColor(0, 0, 0), fontHandle);
+			if (choise==' ')
+			{
+				choise = 'A' - 1;
+			}
+		choise++;
 		}
 	}
 }

@@ -1,5 +1,41 @@
 ﻿#include "incl.h"
 
+
+
+extern bool put;
+// ウィンドウサイズ
+extern const int WIN_WIDTH;
+extern const int WIN_HEIGHT;
+// マス目のサイズ
+extern const int CELL_SIZE;
+// 盤面のサイズ
+extern const int BOARD_SIZE;
+// 画像ハンドル
+extern int bgHandle, siroHandle, kuroHandle, blankHandle, kuro2Handle;///マウスオーバー時の画像
+// 盤面データ (1=白, 2=黒, 0=空白)
+extern std::vector<std::vector<int>> board;
+// プレイヤーターン (1=Player1, 2=Player2)
+extern int currentPlayer;
+extern const char* TITLE;
+extern char key;
+extern const std::vector<unsigned int> cellColors;
+
+extern int putx;
+extern int puty;
+extern std::string rsv;
+extern bool taiki;
+
+
+extern bool isTrue;
+extern int putx;
+extern int puty;
+extern std::vector<std::vector<int>> board;
+extern std::string rsv;//=std::string_literals::R("0iu");
+
+
+
+
+
 namespace nw
 {
 	int net_handle = 0;		  // ネットワークハンドルの定義
@@ -17,6 +53,10 @@ namespace nw
 /// true正解
 /// </summary>
 
+extern bool isTrue;
+extern int putx;
+extern int puty;
+extern std::vector<std::vector<int>> board;
 extern std::string rsv;//=std::string_literals::R("0iu");
 std::array<std::string, 5> result;
 
@@ -58,13 +98,11 @@ std::array<std::string, 5> nw::rsv_question()
 		// 質問文を配列の最初に設定
 		result[0] = j["question"]["question"].get<std::string>();
 
-		char choise = 'A';
 		// 選択肢を配列に設定
 		auto &choices = j["question"]["choices"];
 		for (int i = 0; i < std::min(choices.size(), size_t(4)); ++i)
 		{
-			result[i + 1] = std::to_string(choise) + " " + choices[i].get<std::string>();
-			choise++;
+			result[i + 1] = choices[i].get<std::string>();
 		}
 
 		return result;

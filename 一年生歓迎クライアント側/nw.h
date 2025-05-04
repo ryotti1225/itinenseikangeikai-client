@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include"incl.h"
+
 namespace nw
 {
 	using namespace nlohmann;

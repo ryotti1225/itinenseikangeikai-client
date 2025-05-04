@@ -36,3 +36,12 @@ extern int puty;
 extern std::string rsv;
 extern bool taiki;
 
+
+extern bool isTrue;
+extern int putx;
+extern int puty;
+extern std::vector<std::vector<int>> board;
+extern std::string rsv;//=std::string_literals::R("0iu");
+
+
+
