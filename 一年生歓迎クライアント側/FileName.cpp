@@ -14,7 +14,7 @@ int bgHandle, siroHandle, kuroHandle, blankHandle, kuro2Handle; /// マウスオ
 std::vector<std::vector<int>> board(BOARD_SIZE, std::vector<int>(BOARD_SIZE, 0));
 // プレイヤーターン (1=Player1, 2=Player2)
 int currentPlayer = 1;
-const char *TITLE = "Untitled_Dxlib_window";
+const char* TITLE = "Untitled_Dxlib_window";
 char key = 0;
 
 int putx = -1;
@@ -27,21 +27,21 @@ const std::vector<unsigned int> cellColors = {
 	GetColor(255, 230, 230),
 	GetColor(230, 255, 230),
 	GetColor(230, 230, 255),
-	GetColor(255, 255, 230)};
+	GetColor(255, 255, 230) };
 
-void start_dxlib(int WIN_WIDTH, int WIN_HEIGHT, const char *TITLE);
+void start_dxlib(int WIN_WIDTH, int WIN_HEIGHT, const char* TITLE);
 
 /// ret true 五目並べ成立
 ///		false game続行
-bool Judge(int x, int y, std::vector<std::vector<int>> &board)
+bool Judge(int x, int y, std::vector<std::vector<int>>& board)
 {
 	int col = board[x][y];
 	if (col == 0)
 		return false;
 
 	// 8方向のチェック用の配列
-	const int dx[] = {1, 0, 1, -1}; // 縦、横、斜め（右下）、斜め（左下）
-	const int dy[] = {0, 1, 1, 1};
+	const int dx[] = { 1, 0, 1, -1 }; // 縦、横、斜め（右下）、斜め（左下）
+	const int dy[] = { 0, 1, 1, 1 };
 
 	for (int dir = 0; dir < 4; dir++)
 	{
@@ -141,13 +141,10 @@ void DrawBoard(int ms_x, int ms_y)
 	}
 }
 
-void DrawRefinedStringTable(int left, int top, int right, int bottom, const std::vector<std::vector<std::string>> &table, int fontHandle = -1)
+void DrawRefinedStringTable(int left, int top, int right, int bottom, const std::vector<std::vector<std::string>>& table, int fontHandle = -1)
 {
 	size_t rows = table.size();
 	size_t cols = 0;
-	/*for (const auto& row : table) {
-		if (row.size() > cols) cols = row.size();
-	}*/
 
 	int tableWidth = right - left;
 	int tableHeight = bottom - top;
@@ -175,8 +172,9 @@ void DrawRefinedStringTable(int left, int top, int right, int bottom, const std:
 			DrawBox(cellX, cellY, cellX + columnWidth, cellY + lineHeight, bgColor, TRUE);
 
 			/// 中央揃え＋影
-			const std::string &text = table[row][col];
-			int textWidth = GetDrawStringWidthToHandle(text.c_str(), text.size(), fontHandle) + 10;
+			const std::string& text = table[row][col];
+			// 修正: 文字列長を-1に設定して自動計算
+			int textWidth = GetDrawStringWidthToHandle(text.c_str(), -1, fontHandle) + 10;
 			int textHeight = GetFontSize() + 10;
 
 			if (text.find("\n") != -1)
@@ -200,15 +198,25 @@ void DrawRefinedStringTable(int left, int top, int right, int bottom, const std:
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
 	// DxLib 初期化
-
 	AllocConsole();
-	FILE *stream;
+	FILE* stream;
 	freopen_s(&stream, "CONIN$", "r", stdin);
 	freopen_s(&stream, "CONOUT$", "w", stdout);
 
 	start_dxlib(WIN_WIDTH, WIN_HEIGHT, TITLE);
 
 	int fontHandle = CreateFontToHandle("UD デジタル 教科書体 N", 28, 6, DX_FONTTYPE_ANTIALIASING_8X8);
+	// フォント作成の失敗をチェック
+	if (fontHandle == -1) {
+		std::cout << "#WARNING# Failed to create font handle, trying alternative font #WARNING#" << std::endl;
+		// 代替フォントを試す
+		fontHandle = CreateFontToHandle("MS ゴシック", 28, 6, DX_FONTTYPE_ANTIALIASING_8X8);
+		if (fontHandle == -1) {
+			// デフォルトフォントを使用
+			std::cout << "#WARNING# Using default font #WARNING#" << std::endl;
+		}
+	}
+
 	int left = 112, top = 714, right = 1168, bottom = 957;
 
 	while (ProcessMessage() == 0)
@@ -225,7 +233,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		}
 
 		// マウスクリックで盤面を更新
-		// マウスクリックで盤面を更新
 		int mouseX, mouseY;
 		GetMousePoint(&mouseX, &mouseY);
 
@@ -239,9 +246,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		int gridY = (mouseY - startY) / CELL_SIZE;
 
 		// 盤面の範囲内か確認
-		if (gridX >= 0 && gridX < BOARD_SIZE && gridY >= 0 && gridY < BOARD_SIZE&&put)
+		if (gridX >= 0 && gridX < BOARD_SIZE && gridY >= 0 && gridY < BOARD_SIZE && put)
 		{
-
 			if ((GetMouseInput() & MOUSE_INPUT_LEFT) != 0 && put)
 			{
 				/// おいてなかったら置く＆判定
@@ -260,14 +266,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 					put = false;
 				}
 			}
-		}else{
+		}
+		else
+		{
 			gridX = -1;
 			gridY = -1;
 		}
 
-		/*--------------------------多分問題の回答用↓-------------------------*/
-
-		if (!put)///問題のとき
+		if (!put) ///問題のとき
 		{
 			key = 0;
 
@@ -297,19 +303,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 			}
 		}
 
-		/*----------------------------------------------*/
-
 		// 盤面の描画
 		DrawBoard(gridX, gridY);
 
-
 		int x1 = 0, y1 = 0, x2 = WIN_HEIGHT, y2 = WIN_WIDTH;
 
-		/*auto question = nw::rsv_question();*/
+		// 日本語表示テスト用のテーブルデータ
 		std::vector<std::vector<std::string>> table = {
-			{"aaaabbbbそーちゃんかわいいww"},
-			{"",""},
-			{"",""}
+			{nw::utf8(u8"そーちゃんかわいいwww")},
+			{nw::utf8(u8"あ"),nw::utf8(u8"い")},
+			{nw::utf8(u8"え"),nw::utf8(u8"お")}
 		};
 
 		if (put)
@@ -325,7 +328,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		}
 		if (!put)
 		{
-
 			SetDrawBlendMode(DX_BLENDMODE_ALPHA, 128);
 			DrawBox(y1, x1, y2, x2, GetColor(0, 0, 0), true);
 			SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255);
@@ -343,16 +345,19 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	return 0;
 }
 
-void start_dxlib(int WIN_WIDTH, int WIN_HEIGHT, const char *TITLE)
+void start_dxlib(int WIN_WIDTH, int WIN_HEIGHT, const char* TITLE)
 {
 	std::cout << "#INFO# setting DxLib..." << std::endl;
 
+	// 文字コード関連の設定強化
 	SetUseCharCodeFormat(DX_CHARCODEFORMAT_UTF8);
+	// SetUseJapaneseFont(TRUE) は存在しないので削除
+
 	SetUseDirect3DVersion(DX_DIRECT3D_9);
 	SetFullSceneAntiAliasingMode(16, 2);
 	ChangeWindowMode(true);
 	SetWindowSizeChangeEnableFlag(true, true);
-	SetMainWindowText((const TCHAR *)TITLE);
+	SetMainWindowText((const TCHAR*)TITLE);
 	SetGraphMode(WIN_WIDTH, WIN_HEIGHT, 32);
 	SetWindowSizeExtendRate(1.0);
 	SetBackgroundColor(0, 128, 128);
@@ -382,7 +387,7 @@ void start_dxlib(int WIN_WIDTH, int WIN_HEIGHT, const char *TITLE)
 	kuro2Handle = LoadGraph("kuro2.png");
 
 	std::cout << "#info# Trying to connect to server..." << std::endl;
-	if (nw::CustomSocketInit(127, 8, 0,1) == -1)
+	if (nw::CustomSocketInit(127, 8, 0, 1) == -1)
 	{
 		std::cout << "#WARNIN# Socket init FAILED #WARNIN#";
 		//exit(1);
@@ -391,29 +396,16 @@ void start_dxlib(int WIN_WIDTH, int WIN_HEIGHT, const char *TITLE)
 	{
 		std::cout << "#INFO# Socket init SUCCESS #INFO#";
 
-		system("chcp 65001 > nul");
-		
+		// コマンド実行時の文字コード設定
+		system("chcp 65001 > nul"); // UTF-8に設定
+
 		std::cout << "aaa" << std::endl;
 		system("chcp 65001 > nul");
 
 		nw::send_game_start();
 
-		system("chcp 932 > nul");
+		system("chcp 932 > nul"); // 日本語用に戻す
 
 		std::cout << "サーバーに送信したで" << std::endl;
 	}
 }
-		// if (CheckHitKey(KEY_INPUT_LEFT) == 1) left -= 1;
-		// if (CheckHitKey(KEY_INPUT_RIGHT) == 1) left += 1;
-		// if (CheckHitKey(KEY_INPUT_UP) == 1) top -= 1;
-		// if (CheckHitKey(KEY_INPUT_DOWN) == 1) top += 1;
-		// if (CheckHitKey(KEY_INPUT_A) == 1) right -= 1;
-		// if (CheckHitKey(KEY_INPUT_D) == 1) right += 1;
-		// if (CheckHitKey(KEY_INPUT_W) == 1) bottom -= 1;
-		// if (CheckHitKey(KEY_INPUT_S) == 1) bottom += 1;
-
-
-
-
-
-
