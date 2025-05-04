@@ -43,4 +43,24 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="bg.png">
+      <Filter>リソース ファイル</Filter>
+    </Image>
+    <Image Include="fuseikai.png">
+      <Filter>リソース ファイル</Filter>
+    </Image>
+    <Image Include="kuro.png">
+      <Filter>リソース ファイル</Filter>
+    </Image>
+    <Image Include="kuro2.png">
+      <Filter>リソース ファイル</Filter>
+    </Image>
+    <Image Include="seikai.png">
+      <Filter>リソース ファイル</Filter>
+    </Image>
+    <Image Include="siro.png">
+      <Filter>リソース ファイル</Filter>
+    </Image>
+  </ItemGroup>
 </Project>
