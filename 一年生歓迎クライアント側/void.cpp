@@ -307,7 +307,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 		/*auto question = nw::rsv_question();*/
 		std::vector<std::vector<std::string>> table = {
-			{"aaaabbbbそーちゃんかわいいww"},
+			{"aaaabbbbww"},
 			{"",""},
 			{"",""}
 		};
