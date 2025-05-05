@@ -23,6 +23,7 @@ int puty = -1;
 std::string rsv = "";
 
 bool taiki = true;
+bool isTrue = false;
 
 const std::vector<unsigned int> cellColors = {
 	GetColor(255, 230, 230),
@@ -266,6 +267,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 						std::string turnText = "winner: Player " + std::to_string(currentPlayer);
 						DrawString(300, 50, turnText.c_str(), GetColor(255, 255, 255));
 					}
+
+					nw::send(0);
+
+					PlaySoundMem(SEputHandle, DX_PLAYTYPE_BACK);
+
 					put = false;
 				}
 			}
@@ -283,27 +289,52 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 			if (CheckHitKey(KEY_INPUT_A) == 1)
 			{
 				key = 'a';
-				put = true;
 			}
 			if (CheckHitKey(KEY_INPUT_B) == 1)
 			{
 				key = 'b';
-				put = true;
 			}
 			if (CheckHitKey(KEY_INPUT_C) == 1)
 			{
 				key = 'c';
-				put = true;
 			}
 			if (CheckHitKey(KEY_INPUT_D) == 1)
 			{
 				key = 'd';
-				put = true;
 			}
 			if (key != 0)
 			{
 				nw::send(key); // 押されたキーコードを送信
 			}
+
+			int trueorfalseornone = 0;
+
+			do
+			{
+
+			nw::rsvmsg();
+			if (nw::j.contains("isTrue") && nw::j["isTrue"].is_boolean()) {
+				if (isTrue = nw::j["isTrue"].get<bool>()) {
+					std::cout << "正解の模様！おめでとう！" << std::endl;
+					PlaySoundMem(SEtrueHandle, DX_PLAYTYPE_BACK);
+					trueorfalseornone = 1;
+				}
+				else {
+					std::cout << "ハズレの模様！" << std::endl;
+					PlaySoundMem(SEfalseHandle, DX_PLAYTYPE_BACK);
+					trueorfalseornone = 2;
+				}
+				// isTrue の値を使用
+			}
+			else {
+				// キーが存在しない、または値が boolean 型でない場合の処理
+				std::cout << "判定待ち？" << std::endl;
+				trueorfalseornone = 0;
+			}
+
+			} while (trueorfalseornone!=0);
+
+
 		}
 
 		/*----------------------------------------------*/
@@ -314,12 +345,18 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 		int x1 = 0, y1 = 0, x2 = WIN_HEIGHT, y2 = WIN_WIDTH;
 
-		/*auto question = nw::rsv_question();*/
+		///*auto question = nw::rsv_question();*/
+		//std::vector<std::vector<std::string>> table = {
+		//	{"aaaabbbbww"},
+		//	{"",""},
+		//	{"",""}
+		//};
+
+		auto question = nw::rsv_question();
 		std::vector<std::vector<std::string>> table = {
-			{"aaaabbbbww"},
-			{"",""},
-			{"",""}
-		};
+			{question.at(0)},
+			{question.at(1), question.at(2)},
+			{question.at(3), question.at(4)} };
 
 		if (put)
 		{
@@ -414,6 +451,7 @@ void start_dxlib(int WIN_WIDTH, int WIN_HEIGHT, const char *TITLE)
 
 		std::cout << "サーバーに送信したで" << std::endl;
 	}
+
 }
 		// if (CheckHitKey(KEY_INPUT_LEFT) == 1) left -= 1;
 		// if (CheckHitKey(KEY_INPUT_RIGHT) == 1) left += 1;
