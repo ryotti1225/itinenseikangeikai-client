@@ -10,6 +10,7 @@ const int CELL_SIZE = 33;
 const int BOARD_SIZE = 19;
 // 画像ハンドル
 int bgHandle, siroHandle, kuroHandle, blankHandle, kuro2Handle; /// マウスオーバー時の画像
+int SEputHandle, SEtrueHandle, SEfalseHandle; /// 置いたときの音.etc
 // 盤面データ (1=白, 2=黒, 0=空白)
 std::vector<std::vector<int>> board(BOARD_SIZE, std::vector<int>(BOARD_SIZE, 0));
 // プレイヤーターン (1=Player1, 2=Player2)
@@ -221,6 +222,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	{
 		ClearDrawScreen();
 
+		nw::rsvmsg();
+
 		// ターン情報の描画
 		DrawTurnInfo();
 
@@ -386,6 +389,9 @@ void start_dxlib(int WIN_WIDTH, int WIN_HEIGHT, const char *TITLE)
 	kuroHandle = LoadGraph("kuro.png");
 	blankHandle = LoadGraph("blank.png");
 	kuro2Handle = LoadGraph("kuro2.png");
+	SEputHandle = LoadSoundMem("put.wav");
+	SEfalseHandle = LoadSoundMem("false.wav");///不正解
+	SEtrueHandle = LoadSoundMem("true.wav");///(正解の音)
 
 	std::cout << "#info# Trying to connect to server..." << std::endl;
 	if (nw::CustomSocketInit(127, 8, 0,1) == -1)

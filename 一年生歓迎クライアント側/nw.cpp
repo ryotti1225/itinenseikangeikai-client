@@ -294,6 +294,26 @@ std::string nw::utf8(std::u8string str) {
 	return reinterpret_cast<const char*>(str.c_str());
 }
 
+void nw::rsvmsg()
+{
+	NetWorkRecv(net_handle, rcv_buf, sizeof(rcv_buf));
+	rsv = rcv_buf;
+
+	if (rsv.empty())
+	{
+		std::cerr << "ERROR: rsv is empty" << std::endl;
+		return;
+	}
+	try
+	{
+		j = json::parse(rsv);
+	}
+	catch (const json::parse_error& e)
+	{
+		std::cerr << "JSON parse error: " << e.what() << std::endl;
+	}
+}
+
 /*
 
 log

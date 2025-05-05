@@ -43,7 +43,6 @@ void CustomSocketEnd();
 std::string utf8(std::u8string str);
 
 void rsvmsg();
-void sndmsg();
 
 }
 
