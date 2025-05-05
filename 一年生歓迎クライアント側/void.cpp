@@ -225,7 +225,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	int effectfream = 0;
 	int trueorfalseornone = 0;
 
-	
+	bool cric = false;
 
 	while (ProcessMessage() == 0)
 	{
@@ -256,15 +256,21 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		int gridX = (mouseX - startX) / CELL_SIZE;
 		int gridY = (mouseY - startY) / CELL_SIZE;
 
+		if (!(GetMouseInput() & MOUSE_INPUT_LEFT) != 0)
+		{
+			cric = false;
+		}
+
 		// 盤面の範囲内か確認
 		if (gridX >= 0 && gridX < BOARD_SIZE && gridY >= 0 && gridY < BOARD_SIZE&&put)
 		{
 
-			if ((GetMouseInput() & MOUSE_INPUT_LEFT) != 0 && put)
+			if ((GetMouseInput() & MOUSE_INPUT_LEFT) != 0 && put&&cric==false)
 			{
 				/// おいてなかったら置く＆判定
 				if (board[gridY][gridX] == 0)
 				{
+					cric = true;
 					board[gridY][gridX] = currentPlayer;
 					putx = gridX;
 					puty = gridY;
@@ -275,12 +281,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 						std::string turnText = "winner: Player " + std::to_string(currentPlayer);
 						DrawString(300, 50, turnText.c_str(), GetColor(255, 255, 255));
 
-                        std::string winmsg = (currentPlayer == 1) ? std::string("黒") : std::string("白");
-						//winmsg = winmsg + "の勝利！";
-
-						if (currentPlayer==1)
+						std::string winnerText = "winner: Player ";
+						if (currentPlayer==2)
 						{
-							winmsg = "su";
+							winnerText += "SIRO";
+						}
+						else {
+							winnerText += "KURO";
 						}
 
 						while (true)
@@ -290,7 +297,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 							DrawTurnInfo();
 							DrawBoard(gridX, gridY);
 
-							DrawStringToHandle(30, 20, "ABCD", GetColor(200, 200, 200), fontHandle2, currentPlayer);
+							DrawStringToHandle(150, 480, winnerText.c_str(), GetColor(20, 20, 20), fontHandle2, currentPlayer);
 
 							// 入力処理
 							if (CheckHitKey(KEY_INPUT_ESCAPE))
