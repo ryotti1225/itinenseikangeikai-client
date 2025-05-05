@@ -219,10 +219,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	start_dxlib(WIN_WIDTH, WIN_HEIGHT, TITLE);
 
 	int fontHandle = CreateFontToHandle("UD デジタル 教科書体 N", 28, 6, DX_FONTTYPE_ANTIALIASING_8X8);
+	int fontHandle2 = CreateFontToHandle("UD デジタル 教科書体 N", 100, 6, DX_FONTTYPE_ANTIALIASING_8X8);
 	int left = 112, top = 714, right = 1168, bottom = 957;
 
 	int effectfream = 0;
 	int trueorfalseornone = 0;
+
+	
 
 	while (ProcessMessage() == 0)
 	{
@@ -271,6 +274,32 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 					{
 						std::string turnText = "winner: Player " + std::to_string(currentPlayer);
 						DrawString(300, 50, turnText.c_str(), GetColor(255, 255, 255));
+
+                        std::string winmsg = (currentPlayer == 1) ? std::string("黒") : std::string("白");
+						//winmsg = winmsg + "の勝利！";
+
+						if (currentPlayer==1)
+						{
+							winmsg = "su";
+						}
+
+						while (true)
+						{
+
+							// ターン情報の描画
+							DrawTurnInfo();
+							DrawBoard(gridX, gridY);
+
+							DrawStringToHandle(30, 20, "ABCD", GetColor(200, 200, 200), fontHandle2, currentPlayer);
+
+							// 入力処理
+							if (CheckHitKey(KEY_INPUT_ESCAPE))
+							{
+								break;
+							}
+
+						}
+
 					}
 
 					nw::send('a');
@@ -325,6 +354,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 					PlaySoundMem(SEfalseHandle, DX_PLAYTYPE_BACK);
 					trueorfalseornone = 2;
 					effectfream = fremes;
+					currentPlayer = (currentPlayer == 1) ? 2 : 1;
 				}
 				// isTrue の値を使用
 			}
@@ -445,12 +475,12 @@ void start_dxlib(int WIN_WIDTH, int WIN_HEIGHT, const char *TITLE)
 
 		system("chcp 65001 > nul");
 		
-		std::cout << "aaa" << std::endl;
+		std::cout << "aaaあああ" << std::endl;
 		system("chcp 65001 > nul");
 
 		nw::send_game_start();
 
-
+		system("chcp 932 > nul");
 		std::cout << "サーバーに送信したで" << std::endl;
 	}
 
