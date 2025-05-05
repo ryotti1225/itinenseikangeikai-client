@@ -1,6 +1,7 @@
 ﻿#include "incl.h"
 
 
+            #include <algorithm> // Ensure this header is included for std::min
 
 extern bool put;
 // ウィンドウサイズ
@@ -58,7 +59,8 @@ extern int putx;
 extern int puty;
 extern std::vector<std::vector<int>> board;
 extern std::string rsv;//=std::string_literals::R("0iu");
-std::array<std::string, 6> result;
+std::array<std::u8string, 6> result;
+
 
 /*追加部分*/
 void nw::send_game_start() {
@@ -89,27 +91,31 @@ std::string nw::get_game_status() {
 
 }
 /*---------------------------------*/
-std::array<std::string, 6> nw::rsv_question()
+std::array<std::u8string, 6> nw::rsv_question()
 {
 	if (j.contains("question") && j["question"].contains("question") &&
 		j["question"].contains("choices") && j["question"]["choices"].is_array())
 	{
 
 		// 質問文を配列の最初に設定
-		result[0] = j["question"]["question"].get<std::string>();
+		result[0] = j["question"]["question"].get<std::u8string>();
 
 		// 選択肢を配列に設定
 		auto &choices = j["question"]["choices"];
-		for (int i = 0; i < std::min(choices.size(), size_t(4)); ++i)
+
+
+            // Fix the std::min usage by explicitly casting the arguments to matching types
+            for (int i = 0; i < std::min(static_cast<size_t>(choices.size()), size_t(4)); ++i)
+            
 		{
-			result[i + 1] = choices[i].get<std::string>();
+			result[i + 1] = choices[i].get<std::u8string>();
 		}
 
 		return result;
 	}
 
 	// JSONデータが不正な場合のデフォルト値
-	return {"問題を取得できませんでした", "A ", "B ", "C ", "D ","A "};
+	return {u8"問題を取得できませんでした", u8"A ", u8"B ", u8"C ", u8"D ",u8"A "};
 }
 
 /// <summary>

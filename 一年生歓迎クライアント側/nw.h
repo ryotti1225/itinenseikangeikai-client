@@ -13,7 +13,7 @@ namespace nw
 	extern int port;///ポート番号
 	extern json j;
 
-	extern std::array<std::string, 6> rsv_question();
+	extern std::array<std::u8string, 6> rsv_question();
 
 	/*追加関数*/
 	void send_game_start();

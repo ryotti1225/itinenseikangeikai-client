@@ -35,6 +35,7 @@ const std::vector<unsigned int> cellColors = {
 
 void start_dxlib(int WIN_WIDTH, int WIN_HEIGHT, const char *TITLE);
 
+
 /// ret true 五目並べ成立
 ///		false game続行
 bool Judge(int x, int y, std::vector<std::vector<int>> &board)
@@ -181,6 +182,7 @@ void DrawRefinedStringTable(int left, int top, int right, int bottom, const std:
 
 			/// 中央揃え＋影
 			const std::string text = std::string(1,choise) + " " + table[row][col];
+			
 			int textWidth = GetDrawStringWidthToHandle(text.c_str(), text.size(), fontHandle) + 10;
 			int textHeight = GetFontSize() + 10;
 
@@ -282,13 +284,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 						std::string turnText = "winner: Player " + std::to_string(currentPlayer);
 						DrawString(300, 50, turnText.c_str(), GetColor(255, 255, 255));
 
-						std::string winnerText = "winner: Player ";
+						std::u8string winnerText = u8"の勝利:";
 						if (currentPlayer==2)
 						{
-							winnerText += "SIRO";
+							winnerText += u8"白";
 						}
 						else {
-							winnerText += "KURO";
+							winnerText += u8"黒";
 						}
 
 						while (true)
@@ -298,7 +300,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 							DrawTurnInfo();
 							DrawBoard(gridX, gridY);
 
-							DrawStringToHandle(150, 480, winnerText.c_str(), GetColor(20, 20, 20), fontHandle2, currentPlayer);
+							DrawStringToHandle(150, 480, toU8(winnerText).c_str(), GetColor(20, 20, 20), fontHandle2, currentPlayer);
 
 							// 入力処理
 							if (CheckHitKey(KEY_INPUT_ESCAPE))
@@ -391,9 +393,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 		auto question = nw::rsv_question();
 		std::vector<std::vector<std::string>> table = {
-			{question.at(0)},
-			{question.at(1), question.at(2)},
-			{question.at(3), question.at(4)} };
+			{toU8(question.at(0))},
+			{toU8(question.at(1)), toU8(question.at(2))},
+			{toU8(question.at(3)), toU8(question.at(4))} };
 
 		if (put)
 		{

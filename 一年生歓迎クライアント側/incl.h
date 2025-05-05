@@ -45,3 +45,8 @@ extern std::string rsv;//=std::string_literals::R("0iu");
 
 extern int fremes;
 
+inline std::string toU8(std::u8string u8str) {
+	return reinterpret_cast<const char*>(u8str.c_str());
+}
+
+
