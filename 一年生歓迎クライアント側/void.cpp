@@ -284,13 +284,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 						std::string turnText = "winner: Player " + std::to_string(currentPlayer);
 						DrawString(300, 50, turnText.c_str(), GetColor(255, 255, 255));
 
-						std::u8string winnerText = u8"の勝利:";
+						std::u8string winnerText = u8"";
 						if (currentPlayer==2)
 						{
-							winnerText += u8"白";
+							winnerText = u8"白の勝利！！1";
 						}
 						else {
-							winnerText += u8"黒";
+							winnerText = u8"黒の勝利！！1";
 						}
 
 						while (true)
