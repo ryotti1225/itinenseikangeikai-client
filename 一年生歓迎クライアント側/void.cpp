@@ -371,9 +371,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 			}
 
 			}
-			using namespace std::string_literals;
-
-					NetWorkSend(nw::net_handle, "messagePleaseを含む文字", "messagePleaseを含む文字"s.length());
 
 
 
@@ -393,8 +390,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		//	{"",""},
 		//	{"",""}
 		//};
-
-
 
 		auto question = nw::rsv_question();
 		std::vector<std::vector<std::string>> table = {
@@ -443,7 +438,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		ScreenFlip();
 		fremes++;
 	}
-	nw::send('a',"end");
 	nw::CustomSocketEnd();
 	DxLib_End();
 	return 0;

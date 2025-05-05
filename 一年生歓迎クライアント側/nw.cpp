@@ -2,7 +2,6 @@
 
 
             #include <algorithm> // Ensure this header is included for std::min
-#include <random>
 
 extern bool put;
 // ウィンドウサイズ
@@ -34,6 +33,7 @@ extern int puty;
 extern std::vector<std::vector<int>> board;
 extern std::string rsv;//=std::string_literals::R("0iu");
 extern int fremes;
+
 
 
 
@@ -93,18 +93,15 @@ std::string nw::get_game_status() {
 /*---------------------------------*/
 std::array<std::u8string, 6> nw::rsv_question()
 {
-using namespace std::string_literals;
-	int a = nw::send('a', "messagePleaseを含む文字"s);
-	rsvmsg();
-
-	if (j["choices"].is_array())
+	if (j.contains("question") && j["question"].contains("question") &&
+		j["question"].contains("choices") && j["question"]["choices"].is_array())
 	{
 
 		// 質問文を配列の最初に設定
-		result[0] = j["question"].get<std::u8string>();
+		result[0] = j["question"]["question"].get<std::u8string>();
 
 		// 選択肢を配列に設定
-		auto &choices = j["choices"];
+		auto &choices = j["question"]["choices"];
 
 
             // Fix the std::min usage by explicitly casting the arguments to matching types
@@ -127,7 +124,7 @@ using namespace std::string_literals;
 /// </summary>
 /// <param name="answer">答え</param>
 /// <returns></returns>
-int nw::send(char answer,std::string str)
+int nw::send(char answer)
 {
 	using namespace std::string_literals;
 
@@ -140,7 +137,7 @@ int nw::send(char answer,std::string str)
 
 	ans++;
 
-	std::array<std::u8string, 6> question;// = nw::rsv_question();
+	auto question = nw::rsv_question();
 
 
 	try
@@ -185,7 +182,7 @@ int nw::send(char answer,std::string str)
 
 		j["takenResTime"] = 3; /// 後で書く
 
-		snd_buf = j.dump()+"\n";
+		snd_buf = j.dump()+"\b";
 		std::cout << std::endl;
 		std::cout << snd_buf << std::endl;
 
