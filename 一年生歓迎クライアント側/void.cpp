@@ -226,6 +226,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	int trueorfalseornone = 0;
 
 	bool cric = false;
+	
 
 	while (ProcessMessage() == 0)
 	{
@@ -320,6 +321,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 			gridX = -1;
 			gridY = -1;
 		}
+
 
 		/*--------------------------多分問題の回答用↓-------------------------*/
 
@@ -417,7 +419,19 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 		DrawStringToHandle(30, 20, tmp.c_str(), GetColor(200, 200, 200), fontHandle);
 
-		
+
+		if (trueorfalseornone != 0)
+		{
+			int handle = (trueorfalseornone == 1) ? GEtrueHandle : GEfalseHandle;
+			if (effectfream >= fremes - 90)
+			{
+
+				DrawExtendGraph(452, bottom - 300, 752, bottom, handle, TRUE);
+
+			}
+
+		}
+
 
 		ScreenFlip();
 		fremes++;
@@ -467,8 +481,8 @@ void start_dxlib(int WIN_WIDTH, int WIN_HEIGHT, const char *TITLE)
 	SEputHandle = LoadSoundMem("put.wav");
 	SEfalseHandle = LoadSoundMem("false.wav");///不正解
 	SEtrueHandle = LoadSoundMem("true.wav");///(正解の音)
-	GEfalseHandle = LoadGraph("false.png");
-	GEtrueHandle = LoadGraph("true.png");
+	GEfalseHandle = LoadGraph("fuseikai.png");
+	GEtrueHandle = LoadGraph("seikai.png");
 
 	std::cout << "#info# Trying to connect to server..." << std::endl;
 	if (nw::CustomSocketInit(127, 0, 0,1) == -1)
