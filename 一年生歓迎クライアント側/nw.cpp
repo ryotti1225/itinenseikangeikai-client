@@ -97,12 +97,11 @@ using namespace std::string_literals;
 	int a = nw::send('a', "messagePleaseを含む文字"s);
 	rsvmsg();
 
-	if (j.contains("question") && j["question"].contains("question") &&
-		 j["choices"].is_array())
+	if (j["choices"].is_array())
 	{
 
 		// 質問文を配列の最初に設定
-		result[0] = j["question"]["question"].get<std::u8string>();
+		result[0] = j["question"].get<std::u8string>();
 
 		// 選択肢を配列に設定
 		auto &choices = j["choices"];
