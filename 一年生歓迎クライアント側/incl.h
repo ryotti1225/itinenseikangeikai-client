@@ -43,5 +43,5 @@ extern int puty;
 extern std::vector<std::vector<int>> board;
 extern std::string rsv;//=std::string_literals::R("0iu");
 
-
+extern int fremes;
 

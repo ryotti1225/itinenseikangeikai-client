@@ -13,7 +13,7 @@ namespace nw
 	extern int port;///ポート番号
 	extern json j;
 
-	extern std::array<std::string, 5> rsv_question();
+	extern std::array<std::string, 6> rsv_question();
 
 	/*追加関数*/
 	void send_game_start();
@@ -34,7 +34,6 @@ namespace nw
 /// </summary>
 /// <param name="board"></param>
 /// <returns></returns>
-int update_board(std::vector<std::vector<int>>& board);
 
 int CustomSocketInit(int8_t IP1, int8_t IP2, int8_t IP3, int8_t IP4);
 

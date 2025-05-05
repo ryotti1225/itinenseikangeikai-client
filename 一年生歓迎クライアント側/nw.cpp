@@ -31,7 +31,7 @@ extern int putx;
 extern int puty;
 extern std::vector<std::vector<int>> board;
 extern std::string rsv;//=std::string_literals::R("0iu");
-
+extern int fremes;
 
 
 
@@ -58,7 +58,7 @@ extern int putx;
 extern int puty;
 extern std::vector<std::vector<int>> board;
 extern std::string rsv;//=std::string_literals::R("0iu");
-std::array<std::string, 5> result;
+std::array<std::string, 6> result;
 
 /*追加部分*/
 void nw::send_game_start() {
@@ -89,7 +89,7 @@ std::string nw::get_game_status() {
 
 }
 /*---------------------------------*/
-std::array<std::string, 5> nw::rsv_question()
+std::array<std::string, 6> nw::rsv_question()
 {
 	if (j.contains("question") && j["question"].contains("question") &&
 		j["question"].contains("choices") && j["question"]["choices"].is_array())
@@ -109,7 +109,7 @@ std::array<std::string, 5> nw::rsv_question()
 	}
 
 	// JSONデータが不正な場合のデフォルト値
-	return {"問題を取得できませんでした", "A ", "B ", "C ", "D "};
+	return {"問題を取得できませんでした", "A ", "B ", "C ", "D ","A "};
 }
 
 /// <summary>
@@ -126,6 +126,14 @@ int nw::send(char answer)
 
 	j = empty;
 
+	int ans = answer - 'a';
+	ans=abs(ans);
+
+	ans++;
+
+	auto question = nw::rsv_question();
+
+
 	try
 	{
 		// 受信したJSONデータ（rsv）をパース
@@ -137,31 +145,7 @@ int nw::send(char answer)
 		// 以下、既存のコード
 		json mapArray = json::array();
 
-		for (const auto &row : board)
-		{
-			std::string line;
-			for (int cell : row)
-			{
-				switch (cell)
-				{
-				case 0:
-					line += 'o';
-					break; // 空白
-				case 1:
-					line += 'a';
-					break; // 黒
-				case 2:
-					line += 'b';
-					break; // 白
-				default:
-					line += 'o';
-					break; // その他も空白扱い
-				}
-			}
-			mapArray.push_back(line);
-		}
-
-		j["map"] = mapArray;
+		
 
 		try
 		{
@@ -174,6 +158,18 @@ int nw::send(char answer)
 		{
 
 		}
+
+		if (question[ans]==question[5])
+		{
+			isTrue = true;
+		}
+		else
+		{
+			isTrue = false;
+		}
+
+
+
 
 		j["coordinate"] = json::array();
 		j["coordinate"] = {{putx, puty}};
@@ -193,8 +189,6 @@ int nw::send(char answer)
 		std::cout << rsv << std::endl;
 		//std::cout << j.dump() << std::endl;
 
-		update_board(board);
-
 		NetWorkSend(net_handle, snd_buf.c_str(), snd_buf.length());
 
 		return 0;
@@ -212,48 +206,6 @@ int nw::send(char answer)
 /// </summary>
 /// <param name="board"></param>
 /// <returns></returns>
-int nw::update_board(std::vector<std::vector<int>> &board_old)
-{
-	static std::vector<std::vector<int>> new_board = board_old; /// 新しい盤面
-
-	std::vector<std::vector<int>> board;
-	if (!j.contains("map") || !j["map"].is_array())
-	{
-		return -1; // 空の盤面を返す
-	}
-
-	for (const auto &rowJson : j["map"])
-	{
-		std::vector<int> row;
-		if (!rowJson.is_string())
-			continue;
-
-		std::string line = rowJson.get<std::string>();
-		for (char c : line)
-		{
-			switch (c)
-			{
-			case 'o':
-				row.push_back(0);
-				break; // 空白
-			case 'a':
-				row.push_back(1);
-				break; // 黒
-			case 'b':
-				row.push_back(2);
-				break; // 白
-			default:
-				row.push_back(0);
-				break; // その他も空白扱い
-			}
-		}
-		board.push_back(row);
-	}
-
-	board_old = board;
-
-	return 0;
-}
 
 int nw::CustomSocketInit(int8_t IP1, int8_t IP2, int8_t IP3, int8_t IP4)
 {

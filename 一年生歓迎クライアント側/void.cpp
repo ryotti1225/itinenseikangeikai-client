@@ -11,6 +11,7 @@ const int BOARD_SIZE = 19;
 // 画像ハンドル
 int bgHandle, siroHandle, kuroHandle, blankHandle, kuro2Handle; /// マウスオーバー時の画像
 int SEputHandle, SEtrueHandle, SEfalseHandle; /// 置いたときの音.etc
+int GEtrueHandle, GEfalseHandle; /// 
 // 盤面データ (1=白, 2=黒, 0=空白)
 std::vector<std::vector<int>> board(BOARD_SIZE, std::vector<int>(BOARD_SIZE, 0));
 // プレイヤーターン (1=Player1, 2=Player2)
@@ -24,6 +25,7 @@ std::string rsv = "";
 
 bool taiki = true;
 bool isTrue = false;
+int fremes = 0;
 
 const std::vector<unsigned int> cellColors = {
 	GetColor(255, 230, 230),
@@ -219,6 +221,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	int fontHandle = CreateFontToHandle("UD デジタル 教科書体 N", 28, 6, DX_FONTTYPE_ANTIALIASING_8X8);
 	int left = 112, top = 714, right = 1168, bottom = 957;
 
+	int effectfream = 0;
+	int trueorfalseornone = 0;
+
 	while (ProcessMessage() == 0)
 	{
 		ClearDrawScreen();
@@ -268,7 +273,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 						DrawString(300, 50, turnText.c_str(), GetColor(255, 255, 255));
 					}
 
-					nw::send(0);
+					nw::send('a');
 
 					PlaySoundMem(SEputHandle, DX_PLAYTYPE_BACK);
 
@@ -305,38 +310,31 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 			if (key != 0)
 			{
 				nw::send(key); // 押されたキーコードを送信
-			}
-
-			int trueorfalseornone = 0;
-
-			do
-			{
 
 			nw::rsvmsg();
-			if (nw::j.contains("isTrue") && nw::j["isTrue"].is_boolean()) {
-				if (isTrue = nw::j["isTrue"].get<bool>()) {
+			 {
+				if (isTrue ) {
 					std::cout << "正解の模様！おめでとう！" << std::endl;
 					PlaySoundMem(SEtrueHandle, DX_PLAYTYPE_BACK);
 					trueorfalseornone = 1;
+					put = true;	
+					effectfream = fremes;
 				}
 				else {
 					std::cout << "ハズレの模様！" << std::endl;
 					PlaySoundMem(SEfalseHandle, DX_PLAYTYPE_BACK);
 					trueorfalseornone = 2;
+					effectfream = fremes;
 				}
 				// isTrue の値を使用
 			}
-			else {
-				// キーが存在しない、または値が boolean 型でない場合の処理
-				std::cout << "判定待ち？" << std::endl;
-				trueorfalseornone = 0;
+
 			}
 
-			} while (trueorfalseornone!=0);
 
 
 		}
-
+		DrawExtendGraph(left, top, right, bottom, GEtrueHandle, TRUE);
 		/*----------------------------------------------*/
 
 		// 盤面の描画
@@ -382,7 +380,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 		DrawStringToHandle(30, 20, tmp.c_str(), GetColor(200, 200, 200), fontHandle);
 
+		
+
 		ScreenFlip();
+		fremes++;
 	}
 	nw::CustomSocketEnd();
 	DxLib_End();
@@ -429,9 +430,11 @@ void start_dxlib(int WIN_WIDTH, int WIN_HEIGHT, const char *TITLE)
 	SEputHandle = LoadSoundMem("put.wav");
 	SEfalseHandle = LoadSoundMem("false.wav");///不正解
 	SEtrueHandle = LoadSoundMem("true.wav");///(正解の音)
+	GEfalseHandle = LoadGraph("false.png");
+	GEtrueHandle = LoadGraph("true.png");
 
 	std::cout << "#info# Trying to connect to server..." << std::endl;
-	if (nw::CustomSocketInit(127, 8, 0,1) == -1)
+	if (nw::CustomSocketInit(127, 0, 0,1) == -1)
 	{
 		std::cout << "#WARNIN# Socket init FAILED #WARNIN#";
 		//exit(1);
@@ -447,7 +450,6 @@ void start_dxlib(int WIN_WIDTH, int WIN_HEIGHT, const char *TITLE)
 
 		nw::send_game_start();
 
-		system("chcp 932 > nul");
 
 		std::cout << "サーバーに送信したで" << std::endl;
 	}
