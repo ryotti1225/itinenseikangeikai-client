@@ -26,7 +26,7 @@ namespace nw
 /// </summary>
 /// <param name="answer">答え</param>
 /// <returns></returns>
-	int send(char answer);
+	int send(char answer='a',std::string str="");
 
 /// <summary>
 /// 盤面を書き換える

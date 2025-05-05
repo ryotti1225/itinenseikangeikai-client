@@ -438,6 +438,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		ScreenFlip();
 		fremes++;
 	}
+	nw::send('a',"end");
 	nw::CustomSocketEnd();
 	DxLib_End();
 	return 0;
